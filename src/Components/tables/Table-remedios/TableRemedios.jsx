@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -14,30 +15,28 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-import ProdutsFilters from "./FiltrosCadastros";
 
-import { useState, useEffect } from "react";
-import { getCadastros } from "@/Components/data/lista-cadastros";
+import { getItensRemedios } from "@/Components/data/lista-remedios";
 import { Edit } from "lucide-react";
+import { Button } from "@/Components/ui/button";
 
-export default function TableCadastros() {
+export default function TableRemedios() {
   const [products, setProducts] = useState([]); // State for fetched products
   const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [selectedProduct, setSelectedProduct] = useState(null); // State for selected product in Dialog
+  const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
   const rowsPerPage = 6; // Number of items per page
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const fetchedProducts = await getCadastros();
+        const fetchedProducts = await getItensRemedios();
         setProducts(fetchedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -75,40 +74,40 @@ export default function TableCadastros() {
 
   return (
     <div className="p-6 max-w-4xl space-y-4">
-      <div className="flex items-center justify-between">
-        <ProdutsFilters />
-      </div>
-
       <div className="border rounded-lg p-4">
         <Table>
           <TableHeader>
             <TableHead>Id</TableHead>
             <TableHead>Nome</TableHead>
-            <TableHead>CPF</TableHead>
-            <TableHead>Tipo</TableHead>
-            <TableHead></TableHead>
+            <TableHead>Dosagem</TableHead>
+            <TableHead>Uni Medida</TableHead>
+            <TableHead>Editar</TableHead>
           </TableHeader>
 
           <TableBody>
             {isLoading ? (
               <TableRow key="loading">
-                <TableCell colSpan={3}>Carregando pessoas cadastradas...</TableCell>
+                <TableCell colSpan={5}>Carregando Receitas...</TableCell>
               </TableRow>
             ) : products.length > 0 ? (
               paginatedProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.cpf}</TableCell>
-                  <TableCell>{product.tipo}</TableCell>
-                  <TableCell>
-                    <Dialog>
-                      <DialogTrigger onClick={() => handleEditClick(product)}>
-                        <Edit className="w-4 cursor-pointer" />
-                      </DialogTrigger>
-                      <DialogContent>
+                  <TableCell>{product.dosagem}</TableCell>
+                  <TableCell>{product.uniMedida}</TableCell>
+
+                  {/* DIALOG */}
+
+                  <Dialog>
+                    <DialogTrigger onClick={() => handleEditClick(product)}>
+                      <TableCell>
+                        <Edit className="w-4 cursor-pointer"/>
+                      </TableCell>
+                    </DialogTrigger>
+                    <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Editar Usuário ({product.tipo})</DialogTitle>
+                          <DialogTitle>Editar Remédio</DialogTitle>
                           <DialogDescription>
                             Faça alterações aqui. Clique em salvar quando terminar.
                           </DialogDescription>
@@ -126,100 +125,57 @@ export default function TableCadastros() {
                             />
                           </div>
                           <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="cpf" className="text-right">
-                              CPF
+                            <Label htmlFor="dosagem" className="text-right">
+                              Dosagem
                             </Label>
                             <Input
-                              id="cpf"
-                              value={selectedProduct?.cpf || ''}
+                              id="dosagem"
+                              value={selectedProduct?.dosagem || ''}
                               onChange={handleInputChange}
                               className="col-span-3"
                             />
                           </div>
                           <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="email" className="text-right">
-                              Email
+                            <Label htmlFor="uniMedida" className="text-right">
+                              Uni. Medida
                             </Label>
                             <Input
-                              id="email"
-                              value={selectedProduct?.email || ''}
+                              id="uniMedida"
+                              value={selectedProduct?.uniMedida || ''}
                               onChange={handleInputChange}
                               className="col-span-3"
                             />
                           </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="dataNascimento" className="text-right">
-                              Nascido em
-                            </Label>
-                            <Input
-                              id="dataNascimento"
-                              value={selectedProduct?.dataNascimento || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="telefone" className="text-right">
-                              Telefone
-                            </Label>
-                            <Input
-                              id="telefone"
-                              value={selectedProduct?.telefone || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-
-                          {selectedProduct?.tipo === "Medico" && (
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="CRM" className="text-right">
-                                CRM
-                              </Label>
-                              <Input
-                                id="CRM"
-                                value={selectedProduct?.CRM || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                              />
-                            </div>
-                          )}
-                          {selectedProduct?.tipo !== "Paciente" && (
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="emailResponsavel" className="text-right">
-                                Responsável
-                              </Label>
-                              <Input
-                                id="emailResponsavel"
-                                value={selectedProduct?.emailResponsavel || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                              />
-                            </div>
-                          )}
+                          
                         </div>
                         <DialogFooter>
                           <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
                         </DialogFooter>
                       </DialogContent>
-                    </Dialog>
-                  </TableCell>
+                  </Dialog>
+                  
                 </TableRow>
+
+                
               ))
             ) : (
               <TableRow key="no-results">
-                <TableCell colSpan={3}>Nenhuma pessoa encontrada.</TableCell>
+                <TableCell colSpan={5}>Nenhuma receita encontrada.</TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
 
-      {totalPages > 1 && (
+      {totalPages > 1 && ( // Only show pagination if there are multiple pages
         <Pagination>
           <PaginationContent>
             {currentPage > 1 && (
               <PaginationItem>
-                <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} href="#" />
+                <PaginationPrevious
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  href="#"
+                />
               </PaginationItem>
             )}
             {[...Array(totalPages)].map((_, pageIndex) => (
@@ -235,7 +191,10 @@ export default function TableCadastros() {
             ))}
             {currentPage < totalPages && (
               <PaginationItem>
-                <PaginationNext onClick={() => handlePageChange(currentPage + 1)} href="#" />
+                <PaginationNext
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  href="#"
+                />
               </PaginationItem>
             )}
           </PaginationContent>

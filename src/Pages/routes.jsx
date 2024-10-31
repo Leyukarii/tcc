@@ -10,6 +10,7 @@ import Estoque from "./Estoque";
 import Configuracoes from "./Configuracoes";
 import CadastroNovaSenha from "@/Components/CadastroNovaSenha/CadastroNovaSenha";
 import NovaSenha from "./NovaSenha";
+import RetiradaEstoque from "./RetiradaEstoque";
 
 export const router = createBrowserRouter([
     {
@@ -35,5 +36,9 @@ export const router = createBrowserRouter([
     {
         path: "/nova-senha", 
         element: <NovaSenha />
+    },
+    {
+        path: "/retirada",
+        element: <RetiradaEstoque/>
     }
 ]);

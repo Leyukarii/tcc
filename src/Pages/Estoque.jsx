@@ -10,6 +10,8 @@ import TableReceitas from "@/Components/tables/Table-receitas/TableReceitas";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import style from './Navbar.module.css';
 import FiltroReceitaEstoque from "@/Components/tables/Table-receitas/FiltroReceitaEstoque";
+import TableReceitasEstoque from "@/Components/tables/Table-receitas/TableReceitasEstoque";
+import TableRemedios from "@/Components/tables/Table-remedios/TableRemedios";
 
 export default function Estoque(){
     return (
@@ -31,7 +33,7 @@ export default function Estoque(){
                             <h1 className="title2">Buscar Receitas</h1> 
                             <div className="w-3/4">
                                 <FiltroReceitaEstoque/>
-                                <TableReceitas/>
+                                <TableReceitasEstoque/>
 
                             </div>
                         </TabsContent>
@@ -56,7 +58,7 @@ export default function Estoque(){
 
                         </TabsContent>
                         <TabsContent value='addRemedio'>
-                            <CadastroRemedio />
+                            <CadastroRemedio />                            
                         </TabsContent>
                         <TabsContent value='addRemedioEstoque'>
                             <CadastroRemedioEstoque />

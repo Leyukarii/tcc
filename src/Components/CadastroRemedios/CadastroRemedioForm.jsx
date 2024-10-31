@@ -4,7 +4,11 @@ import Button1 from '../Forms/Button1';
 import useForm from '../../Hooks/useForm';
 import styles from './CadastroRemedioForm.module.css';
 import Input4 from '../Forms/Input4';
+<<<<<<< HEAD
 import axios from 'axios';
+=======
+import TableRemedios from '../tables/Table-remedios/TableRemedios';
+>>>>>>> 2b4d37f1cf0cde0a855848ead511aca29c798459
 
 const CadastroRemedioForm = () => {
   const description = useForm();
@@ -60,6 +64,7 @@ const CadastroRemedioForm = () => {
         </div>
         <Button1>Cadastrar Remédio</Button1>
         </form>
+      <TableRemedios/>
     </section>
   )
 }
