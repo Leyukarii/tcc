@@ -8,38 +8,24 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/Components/ui/pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 import ProdutsFilters from "./FiltroReceitas";
 import { getReceitas } from "@/Components/data/lista-receitas";
 import { Edit } from "lucide-react";
+import { Button } from "@/Components/ui/button";
 
-// Simples modal component
-const Modal = ({ isOpen, onClose, product }) => {
-  if (!isOpen) return null; // Don't render if modal is not open
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg w-1/3">
-        <h2 className="text-xl font-semibold mb-4">Editar Receita</h2>
-        {product && (
-          <div>
-            <p><strong>ID:</strong> {product.id}</p>
-            <p><strong>Nome:</strong> {product.name}</p>
-            <p><strong>CPF:</strong> {product.cpf}</p>
-            <p><strong>Data Emissão:</strong> {product.data}</p>
-            {/* Aqui você pode adicionar mais campos editáveis */}
-          </div>
-        )}
-        <button
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-          onClick={onClose}
-        >
-          Fechar
-        </button>
-      </div>
-    </div>
-  );
-};
 
 export default function TableReceitas() {
   const [products, setProducts] = useState([]); // State for fetched products
@@ -89,7 +75,7 @@ export default function TableReceitas() {
             <TableHead>Nome</TableHead>
             <TableHead>CPF</TableHead>
             <TableHead>Data Emissão</TableHead>
-            <TableHead>Editar</TableHead>
+            <TableHead>Visualizar</TableHead>
           </TableHeader>
 
           <TableBody>
@@ -104,12 +90,76 @@ export default function TableReceitas() {
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.cpf}</TableCell>
                   <TableCell>{product.data}</TableCell>
-                  <TableCell>
-                    <Edit
-                      className="w-4 cursor-pointer"
-                      onClick={() => handleEditClick(product)} // Open modal on click
-                    />
-                  </TableCell>
+
+                  {/* DIALOG */}
+
+                  <Dialog>
+                    <DialogTrigger>
+                      <TableCell>
+                        <Edit className="w-4 cursor-pointer"/>
+                      </TableCell>
+                    </DialogTrigger>
+                    <DialogContent className='max-w-4xl' >
+                      <DialogHeader>
+                        <DialogTitle>Receita médica</DialogTitle>
+                        <DialogDescription className="space-x-10">
+                          <span>Data emissão: {product.data}</span>
+                          <span>Local: {product.local}</span>
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="name" className="text-right">
+                            Paciente / CPF
+                          </Label>
+                          <Input id="name" value={product.name} className="col-span-2"/>
+                          <Input id="cpf" value={product.cpf} className="col-span-1" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="nameMedico" className="text-right">
+                            Médico / CRM
+                          </Label>
+                          <Input id="nameMedico" value={product.nomeMedico} className="col-span-2" />
+                          <Input id="CRM" value={product.CRM} className="col-span-1" />
+                        </div>
+                        {/* TABELA DE ITENS DA RECEITA */}
+                        <div className="mt-4">
+                          <h3 className="text-lg font-medium">Itens da Receita</h3>
+                          <div className="max-h-60 overflow-y-auto"> {/* Define height and scroll */}
+                            <Table>
+                              <TableHeader>
+                                <TableHead>ID</TableHead>
+                                <TableHead>Nome do Remédio</TableHead>
+                                <TableHead>Quantidade</TableHead>
+                                <TableHead>Descrição</TableHead>
+                              </TableHeader>
+                              <TableBody>
+                                {product.itens.map((item) => (
+                                  <TableRow key={item.id}>
+                                    <TableCell>{item.id}</TableCell>
+                                    <TableCell>{item.nomeRemedio}</TableCell>
+                                    <TableCell>{item.qtd}</TableCell>
+                                    <TableCell>{item.descricao}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+
+
+
+
+
+
+                      </div>
+                      <DialogFooter>
+                        <DialogClose>
+                          <Button>Fechar</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </TableRow>
               ))
             ) : (
@@ -155,12 +205,7 @@ export default function TableReceitas() {
         </Pagination>
       )}
 
-      {/* Render the modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        product={selectedProduct}
-      />
+     
     </div>
   );
 }
