@@ -6,6 +6,7 @@ import styles from './CadastroRemedioForm.module.css';
 import Input2 from '../Forms/Input2';
 import Button1 from '../Forms/Button1';
 import Input4 from '../Forms/Input4';
+import TableRemedios from '../tables/Table-remedios/TableRemedios';
 
 const CadastroRemedioForm = () => {
     const nomeRemedio = useForm();
@@ -29,6 +30,7 @@ const CadastroRemedioForm = () => {
         </div>
         <Button1>Cadastrar Remédio</Button1>
         </form>
+      <TableRemedios/>
     </section>
   )
 }
