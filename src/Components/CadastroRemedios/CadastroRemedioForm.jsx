@@ -1,16 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react';
 import Input from '../Forms/Input';
-import Button from '../Forms/Button';
+import Button1 from '../Forms/Button1';
 import useForm from '../../Hooks/useForm';
 import styles from './CadastroRemedioForm.module.css';
-import Input2 from '../Forms/Input2';
-import Button1 from '../Forms/Button1';
 import Input4 from '../Forms/Input4';
+import axios from 'axios';
 
 const CadastroRemedioForm = () => {
-    const nomeRemedio = useForm();
-    const dosagem = useForm();
-    const unimedida = useForm();
+  const description = useForm();
+  const dosage = useForm();
+  const measure = useForm();
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try{
+      const response = await axios.post('http://localhost:5173/api/Medicament', {
+        description: description.value,
+        dosage: dosage.value,
+        measure: measure.value,
+      });
+
+      if (response.status === 201) {
+        setFormSuccess('Medicamento cadastrado com sucesso!');
+        setFormError('');
+        // Limpa os campos após o cadastro
+        description.setValue('');
+        dosage.setValue('');
+        measure.setValue('');
+    } else{
+      setFormError('Erro ao cadastrar medicamento');
+      setFormSuccess('');
+    }
+    }catch (error) {
+      console.error('Erro ao conectar ao servidor:', error);
+      setFormError('Erro ao conectar ao servidor');
+      setFormSuccess('');
+    }
+  };
 
   return (
     <section className="animeLeft">
@@ -19,10 +48,12 @@ const CadastroRemedioForm = () => {
         </div>
         <form className={styles.formcontainerR}>
         <div className={styles.formrowR}>
-          <Input4 label="Nome do Remédio" type="text" name="nomeRemedio" {...nomeRemedio}></Input4>
-          <Input label="Dosagem" type="number" name="dosagem" {...dosagem}></Input>
-          <Input label="Unidade de Medida" type="number" name="unimedida" {...unimedida}></Input>
+        <Input4 label="Descrição do Medicamento" type="text" name="description" {...description}></Input4>
+        <Input label="Dosagem" type="number" name="dosage" {...dosage}></Input>
+        <Input label="Unidade de Medida" type="text" name="measure" {...measure}></Input>
         </div>
+        {formError && <p style={{ color: 'red' }}>{formError}</p>}
+        {formSuccess && <p style={{ color: 'green' }}>{formSuccess}</p>}
 
         <div className={styles.formrowR}>
 
