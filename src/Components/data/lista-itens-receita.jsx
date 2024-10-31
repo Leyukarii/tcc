@@ -7,3 +7,7 @@ export async function getItensReceita(){
 
     return cadastros
 }
+
+export async function addItensReceita(params) {
+    
+}

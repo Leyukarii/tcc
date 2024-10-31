@@ -1,12 +1,23 @@
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-  } from "@/Components/ui/pagination";
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/Components/ui/pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 import ProdutsFilters from "./FiltrosCadastros";
@@ -79,7 +90,74 @@ export default function TableCadastros(){
                             <TableCell>{product.name}</TableCell>
                             <TableCell>{product.cpf}</TableCell>
                             <TableCell>{product.tipo}</TableCell>
-                            <TableCell><Edit className="w-4 cursor-pointer"/></TableCell>
+                            {/* Criando o pop-up do edit */}
+                            <Dialog>
+                              <DialogTrigger>
+                                <TableCell><Edit className="w-4 cursor-pointer"/></TableCell>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Editar Usuário ({product.tipo})</DialogTitle>
+                                  <DialogDescription>
+                                    Faça alterações aqui. Clique em salvar quando terminar.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="name" className="text-right">
+                                      Nome
+                                    </Label>
+                                    <Input id="name" value={product.name} className="col-span-3" />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="CPF" className="text-right">
+                                      CPF
+                                    </Label>
+                                    <Input id="CPF" value={product.cpf} className="col-span-3" />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="email" className="text-right">
+                                    Email
+                                    </Label>
+                                    <Input id="CPF" value={product.email} className="col-span-3" />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="nascimento" className="text-right">
+                                      Nascido em
+                                    </Label>
+                                    <Input id="nascimento" value={product.dataNascimento} className="col-span-3" />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="telefone" className="text-right">
+                                      Telefone
+                                    </Label>
+                                    <Input id="telefone" value={product.telefone} className="col-span-3" />
+                                  </div>
+
+                                  {product.tipo === "Medico" &&
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="CRM" className="text-right">
+                                      CRM
+                                      </Label>
+                                      <Input id="CRM" value={product.CRM} className="col-span-3" />
+                                    </div>
+                                  }
+                                  {product.tipo != "Paciente" &&
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                      <Label htmlFor="responsavel" className="text-right">
+                                      Responsável
+                                      </Label>
+                                      <Input id="responsavel" value={product.emailResponsavel} className="col-span-3" />
+                                    </div>
+                                  }
+
+                                </div>
+                                <DialogFooter>
+                                  <Button type="submit">Save changes</Button>
+                                </DialogFooter>
+                              </DialogContent>
+
+                            </Dialog>
                         </TableRow>
                     ))
                     ) : (
