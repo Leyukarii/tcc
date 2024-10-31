@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Importa o hook de navegação
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -17,23 +17,22 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-import ProdutsFilters from "./FiltroReceitas";
 import { getReceitas } from "@/Components/data/lista-receitas";
-import { Edit } from "lucide-react";
+import { Edit, Package } from "lucide-react";
 import { Button } from "@/Components/ui/button";
-
 
 export default function TableReceitasEstoque() {
   const [products, setProducts] = useState([]); // State for fetched products
   const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
   const rowsPerPage = 6; // Number of items per page
+
+  const navigate = useNavigate(); // Cria o hook de navegação
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,9 +56,9 @@ export default function TableReceitasEstoque() {
     setCurrentPage(newPage);
   };
 
-  const handleEditClick = (product) => {
-    setSelectedProduct(product); // Set the product to be edited
-    setIsModalOpen(true); // Open the modal
+  const handleRedirect = (product) => {
+    // Redireciona para a página de destino com o produto como estado
+    navigate('/retirada', { state: { product } });
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -113,15 +112,15 @@ export default function TableReceitasEstoque() {
                           <Label htmlFor="name" className="text-right">
                             Paciente / CPF
                           </Label>
-                          <Input id="name" value={product.name} className="col-span-2"/>
-                          <Input id="cpf" value={product.cpf} className="col-span-1" />
+                          <Input id="name" value={product.name} readOnly className="col-span-2"/>
+                          <Input id="cpf" value={product.cpf} readOnly className="col-span-1" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="nameMedico" className="text-right">
                             Médico / CRM
                           </Label>
-                          <Input id="nameMedico" value={product.nomeMedico} className="col-span-2" />
-                          <Input id="CRM" value={product.CRM} className="col-span-1" />
+                          <Input id="nameMedico" value={product.nomeMedico} readOnly className="col-span-2" />
+                          <Input id="CRM" value={product.CRM} readOnly className="col-span-1" />
                         </div>
                         {/* TABELA DE ITENS DA RECEITA */}
                         <div className="mt-4">
@@ -155,7 +154,9 @@ export default function TableReceitasEstoque() {
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <TableCell>retirar</TableCell>
+                  <TableCell>
+                    <Package className="w-5 h-5 cursor-pointer" onClick={() => handleRedirect(product)}/>
+                  </TableCell>
                 </TableRow>
 
                 
@@ -202,8 +203,6 @@ export default function TableReceitasEstoque() {
           </PaginationContent>
         </Pagination>
       )}
-
-     
     </div>
   );
 }
