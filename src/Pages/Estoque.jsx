@@ -22,7 +22,6 @@ export default function Estoque(){
                         <ModalPages >
                             <TabsList className='p-4 '>
                                 <TabsTrigger className={style.textoNav} value="buscarReceita">Buscar Receita</TabsTrigger>
-                                <TabsTrigger className={style.textoNav} value="receitaEncontrada">Receita Encontrada</TabsTrigger>
                                 <TabsTrigger className={style.textoNav} value="addRemedio">Cadastrar Remédio</TabsTrigger>
                                 <TabsTrigger className={style.textoNav} value="addRemedioEstoque">Add Remédio ao Estoque</TabsTrigger>
                                 <TabsTrigger className={style.textoNav} value="listaEstoque">Estoque</TabsTrigger>
@@ -36,26 +35,6 @@ export default function Estoque(){
                                 <TableReceitasEstoque/>
 
                             </div>
-                        </TabsContent>
-                        <TabsContent value='receitaEncontrada'>
-                           
-                
-                            <div className="flex w-full mt-10">
-                                <div className="w-full">
-                                    <h1 className="title2">Itens Sobre a Mesa</h1>
-                                    <TableReceitaEstoque/>
-                                </div>
-
-                                <div className="w-full">
-                                    <h1 className="title2">Itens Receita</h1>
-                                    <TableReceitaEstoque/>
-                                </div>
-                            </div>
-                            
-                            <div className="flex justify-center mt-8">
-                                <Button>Validar remédios</Button>
-                            </div>
-
                         </TabsContent>
                         <TabsContent value='addRemedio'>
                             <CadastroRemedio />                            
