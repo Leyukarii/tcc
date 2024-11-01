@@ -132,9 +132,18 @@ export default function TableCadastros() {
                             <Input
                               id="cpf"
                               value={selectedProduct?.cpf || ''}
-                              onChange={handleInputChange}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
+                                const formattedCPF = value
+                                  .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o primeiro ponto
+                                  .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o segundo ponto
+                                  .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço antes dos dois últimos dígitos
+                                handleInputChange({ target: { id: 'cpf', value: formattedCPF } });
+                              }}
+                              maxLength={14} // Define o tamanho máximo como 14 caracteres (xxx.xxx.xxx-xx)
                               className="col-span-3"
                             />
+
                           </div>
                           <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="email" className="text-right">
@@ -165,9 +174,18 @@ export default function TableCadastros() {
                             <Input
                               id="telefone"
                               value={selectedProduct?.telefone || ''}
-                              onChange={handleInputChange}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
+                                const formattedPhone = value
+                                  .replace(/(\d{2})(\d)/, '($1) $2') // Adiciona os parênteses em volta do DDD
+                                  .replace(/(\d{5})(\d)/, '$1-$2')   // Adiciona o hífen após o quinto dígito
+                                  .slice(0, 15); // Limita o número de caracteres para (xx) x xxxx-xxxx
+                                handleInputChange({ target: { id: 'telefone', value: formattedPhone } });
+                              }}
+                              maxLength={15} // Define o tamanho máximo como 15 caracteres (formato (xx) x xxxx-xxxx)
                               className="col-span-3"
                             />
+
                           </div>
 
                           {selectedProduct?.tipo === "Medico" && (

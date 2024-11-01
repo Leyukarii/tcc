@@ -2,6 +2,17 @@ import SidebarMenu from "@/Components/Sidebar";
 import { useLocation } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/Components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"
 
 export default function RetiradaEstoque() {
   const location = useLocation();
@@ -16,8 +27,8 @@ export default function RetiradaEstoque() {
           <div>
             
             {/* Tabela para exibir os itens da receita */}
-            <div className="mt-4">
-              <Table className='bg-zinc-100'>
+            <div className="mt-4 border rounded-lg p-4 bg-zinc-50'">
+              <Table >
                 <TableHeader>
                   <TableHead>ID</TableHead>
                   <TableHead>Nome do Remédio</TableHead>
@@ -41,10 +52,26 @@ export default function RetiradaEstoque() {
           <p>Produto não encontrado.</p>
         )}
 
-        <div className="flex justify-center mt-10">
-            <Button>Validar</Button>
-        </div>
-
+    
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+            <div className="flex justify-center mt-10">
+                <Button variant="outline">Validar</Button>
+            </div>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                <AlertDialogTitle>Os medicamentos foram retirados corretamento da estante ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                    Retire os medicamentos informados na receita para que a retirada seja concluida.
+                </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                <AlertDialogCancel>Ainda não retirei</AlertDialogCancel>
+                <AlertDialogAction>Sim</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
