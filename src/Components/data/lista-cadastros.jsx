@@ -78,7 +78,7 @@ export async function getCadastroById(cpf,role) {
 
 export async function deleteCadastro(id,role){
 
-    if(role === 'patient'){
+    if(role == 'patient'){
         try {
             const response = await api.delete(`/Patient/${id}`); // Substitua '/Employee/' pelo endpoint correto de delete
             if (response.status === 200) {

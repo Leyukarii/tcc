@@ -44,7 +44,7 @@ export default function TableCadastros() {
       setIsLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -66,7 +66,7 @@ export default function TableCadastros() {
 
   const handleDelete = async () => {
     if (selectedProduct) {
-      const result = await deleteCadastro(selectedProduct.id);
+      const result = await deleteCadastro(selectedProduct.id,selectedProduct.role);
       if (result.success) {
         setSelectedProduct(null); // Limpa o produto selecionado
         fetchData();
