@@ -15,17 +15,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-
 import { getItensRemedios } from "@/Components/data/lista-remedios";
+import api from "@/axios/config"; // Certifique-se de que está importando a configuração da API corretamente
 import { Edit } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 
-export default function TableRemedios() {
+export default function TableRemedios({ refresh }) {
   const [products, setProducts] = useState([]); // State for fetched products
   const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
@@ -46,7 +45,7 @@ export default function TableRemedios() {
     };
 
     fetchData();
-  }, []); // Fetch data on component mount
+  }, [refresh]); // Fetch data on component mount and on refresh
 
   const totalPages = Math.ceil(products.length / rowsPerPage); // Calculate total pages
 
@@ -66,6 +65,20 @@ export default function TableRemedios() {
   const handleSaveChanges = () => {
     // Optionally update the products list with the edited product here
     setSelectedProduct(null); // Close Dialog after saving
+  };
+
+  const handleDelete = async () => {
+    if (selectedProduct) {
+      try {
+        await api.delete(`/Medicament/${selectedProduct.id}`); // Ajuste o endpoint conforme necessário
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product.id !== selectedProduct.id)
+        );
+        setSelectedProduct(null); // Fechar o diálogo após exclusão
+      } catch (error) {
+        console.error("Erro ao deletar o produto:", error);
+      }
+    }
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -98,65 +111,65 @@ export default function TableRemedios() {
                   <TableCell>{product.uniMedida}</TableCell>
 
                   {/* DIALOG */}
-
                   <Dialog>
                     <DialogTrigger onClick={() => handleEditClick(product)}>
                       <TableCell>
-                        <Edit className="w-4 cursor-pointer"/>
+                        <Edit className="w-4 cursor-pointer" />
                       </TableCell>
                     </DialogTrigger>
                     <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Editar Remédio</DialogTitle>
-                          <DialogDescription>
-                            Faça alterações aqui. Clique em salvar quando terminar.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                              Nome
-                            </Label>
-                            <Input
-                              id="name"
-                              value={selectedProduct?.name || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="dosagem" className="text-right">
-                              Dosagem
-                            </Label>
-                            <Input
-                              id="dosagem"
-                              value={selectedProduct?.dosagem || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="uniMedida" className="text-right">
-                              Uni. Medida
-                            </Label>
-                            <Input
-                              id="uniMedida"
-                              value={selectedProduct?.uniMedida || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          
+                      <DialogHeader>
+                        <DialogTitle>Editar Remédio</DialogTitle>
+                        <DialogDescription>
+                          Faça alterações aqui. Clique em salvar quando terminar.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="name" className="text-right">
+                            Nome
+                          </Label>
+                          <Input
+                            id="name"
+                            value={selectedProduct?.name || ''}
+                            onChange={handleInputChange}
+                            className="col-span-3"
+                          />
                         </div>
-                        <DialogFooter>
-                          <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
-                        </DialogFooter>
-                      </DialogContent>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="dosagem" className="text-right">
+                            Dosagem
+                          </Label>
+                          <Input
+                            id="dosagem"
+                            value={selectedProduct?.dosagem || ''}
+                            onChange={handleInputChange}
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="uniMedida" className="text-right">
+                            Uni. Medida
+                          </Label>
+                          <Input
+                            id="uniMedida"
+                            value={selectedProduct?.uniMedida || ''}
+                            onChange={handleInputChange}
+                            className="col-span-3"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="button" variant="destructive" onClick={handleDelete}>
+                          Delete
+                        </Button>
+                        <Button type="button" onClick={handleSaveChanges}>
+                          Save changes
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
                   </Dialog>
-                  
                 </TableRow>
-
-                
               ))
             ) : (
               <TableRow key="no-results">
@@ -167,15 +180,12 @@ export default function TableRemedios() {
         </Table>
       </div>
 
-      {totalPages > 1 && ( // Only show pagination if there are multiple pages
+      {totalPages > 1 && (
         <Pagination>
           <PaginationContent>
             {currentPage > 1 && (
               <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  href="#"
-                />
+                <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} href="#" />
               </PaginationItem>
             )}
             {[...Array(totalPages)].map((_, pageIndex) => (
@@ -191,10 +201,7 @@ export default function TableRemedios() {
             ))}
             {currentPage < totalPages && (
               <PaginationItem>
-                <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  href="#"
-                />
+                <PaginationNext onClick={() => handlePageChange(currentPage + 1)} href="#" />
               </PaginationItem>
             )}
           </PaginationContent>
