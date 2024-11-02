@@ -23,15 +23,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import ProdutsFilters from "./FiltrosCadastros";
 
 import { useState, useEffect } from "react";
-import { getCadastros } from "@/Components/data/lista-cadastros";
+import { getCadastros,getCadastroById  } from "@/Components/data/lista-cadastros";
 import { Edit } from "lucide-react";
 
 export default function TableCadastros() {
-  const [products, setProducts] = useState([]); // State for fetched products
-  const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
-  const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [selectedProduct, setSelectedProduct] = useState(null); // State for selected product in Dialog
-  const rowsPerPage = 6; // Number of items per page
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null); 
+  const rowsPerPage = 6;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,40 +45,42 @@ export default function TableCadastros() {
         setIsLoading(false);
       }
     };
-
     fetchData();
-  }, []); // Fetch data on component mount
+  }, []);
 
-  const totalPages = Math.ceil(products.length / rowsPerPage); // Calculate total pages
+  const totalPages = Math.ceil(products.length / rowsPerPage);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
-  const handleEditClick = (product) => {
-    setSelectedProduct({ ...product }); // Create a copy of the product to edit
+  const handleEditClick = async (product) => {
+    try {
+      const detailedProduct = await getCadastroById(product.cpf,product.role);
+      setSelectedProduct(detailedProduct);
+    } catch (error) {
+      console.error("Erro ao buscar os detalhes do produto:", error);
+    }
   };
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setSelectedProduct((prev) => ({ ...prev, [id]: value })); // Update selected product's specific field
+    setSelectedProduct((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSaveChanges = () => {
-    // Optionally update the products list with the edited product here
-    setSelectedProduct(null); // Close Dialog after saving
+    setSelectedProduct(null);
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const paginatedProducts = products.slice(startIndex, endIndex); // Slice products for current page
+  const paginatedProducts = products.slice(startIndex, endIndex);
 
   return (
     <div className="p-6 max-w-4xl space-y-4">
       <div className="flex items-center justify-between">
         <ProdutsFilters />
       </div>
-
       <div className="border rounded-lg p-4">
         <Table>
           <TableHeader>
@@ -88,7 +90,6 @@ export default function TableCadastros() {
             <TableHead>Tipo</TableHead>
             <TableHead></TableHead>
           </TableHeader>
-
           <TableBody>
             {isLoading ? (
               <TableRow key="loading">
@@ -96,11 +97,11 @@ export default function TableCadastros() {
               </TableRow>
             ) : products.length > 0 ? (
               paginatedProducts.map((product) => (
-                <TableRow key={product.id}>
+                <TableRow key={product.uniqueId}>
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.cpf}</TableCell>
-                  <TableCell>{product.tipo}</TableCell>
+                  <TableCell>{product.role}</TableCell>
                   <TableCell>
                     <Dialog>
                       <DialogTrigger onClick={() => handleEditClick(product)}>
@@ -108,113 +109,61 @@ export default function TableCadastros() {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Editar Usuário ({product.tipo})</DialogTitle>
+                          <DialogTitle>Editar Usuário ({product.role})</DialogTitle>
                           <DialogDescription>
-                            Faça alterações aqui. Clique em salvar quando terminar.
+                            Faça alterações aqui. Clique em salvar quando terminar. 
                           </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                              Nome
-                            </Label>
-                            <Input
-                              id="name"
-                              value={selectedProduct?.name || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="cpf" className="text-right">
-                              CPF
-                            </Label>
-                            <Input
-                              id="cpf"
-                              value={selectedProduct?.cpf || ''}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
-                                const formattedCPF = value
-                                  .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o primeiro ponto
-                                  .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o segundo ponto
-                                  .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço antes dos dois últimos dígitos
+                        {selectedProduct && (
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="name" className="text-right">Nome</Label>
+                              <Input id="name" value={selectedProduct.name || ''} onChange={handleInputChange} className="col-span-3" />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="cpf" className="text-right">CPF</Label>
+                              <Input id="cpf" value={selectedProduct.cpf || ''} onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                const formattedCPF = value.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
                                 handleInputChange({ target: { id: 'cpf', value: formattedCPF } });
-                              }}
-                              maxLength={14} // Define o tamanho máximo como 14 caracteres (xxx.xxx.xxx-xx)
-                              className="col-span-3"
-                            />
-
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="email" className="text-right">
-                              Email
-                            </Label>
-                            <Input
-                              id="email"
-                              value={selectedProduct?.email || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="dataNascimento" className="text-right">
-                              Nascido em
-                            </Label>
-                            <Input
-                              id="dataNascimento"
-                              value={selectedProduct?.dataNascimento || ''}
-                              onChange={handleInputChange}
-                              className="col-span-3"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="telefone" className="text-right">
-                              Telefone
-                            </Label>
-                            <Input
-                              id="telefone"
-                              value={selectedProduct?.telefone || ''}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
-                                const formattedPhone = value
-                                  .replace(/(\d{2})(\d)/, '($1) $2') // Adiciona os parênteses em volta do DDD
-                                  .replace(/(\d{5})(\d)/, '$1-$2')   // Adiciona o hífen após o quinto dígito
-                                  .slice(0, 15); // Limita o número de caracteres para (xx) x xxxx-xxxx
+                              }} maxLength={14} className="col-span-3" />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="email" className="text-right">Email</Label>
+                              <Input id="email" value={selectedProduct.email || ''} onChange={handleInputChange} className="col-span-3" />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="dataNascimento" className="text-right">Nascido em</Label>
+                              <Input id="dataNascimento" value={selectedProduct.dataNascimento || ''} onChange={handleInputChange} className="col-span-3" />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="telefone" className="text-right">Telefone</Label>
+                              <Input id="telefone" value={selectedProduct.telefone || ''} onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                const formattedPhone = value.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2').slice(0, 15);
                                 handleInputChange({ target: { id: 'telefone', value: formattedPhone } });
-                              }}
-                              maxLength={15} // Define o tamanho máximo como 15 caracteres (formato (xx) x xxxx-xxxx)
-                              className="col-span-3"
-                            />
-
+                              }} maxLength={15} className="col-span-3" />
+                            </div>
+                            {selectedProduct.role === "médico" && (
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="CRM" className="text-right">CRM</Label>
+                                <Input id="CRM" value={selectedProduct.CRM || ''} onChange={handleInputChange} className="col-span-3" />
+                              </div>
+                            )}
+                            {selectedProduct.role !== "patient" ? (
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="emailResponsavel" className="text-right">Responsável</Label>
+                                <Input id="emailResponsavel" value={selectedProduct.emailResponsavel || ''} onChange={handleInputChange} className="col-span-3" />
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="emailResponsavel" className="text-right">Observação</Label>
+                                <Input id="Observação" value={selectedProduct.obs || ''} 
+                                onChange={handleInputChange} className="col-span-3" />
+                              </div>)
+                            }
                           </div>
-
-                          {selectedProduct?.tipo === "Medico" && (
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="CRM" className="text-right">
-                                CRM
-                              </Label>
-                              <Input
-                                id="CRM"
-                                value={selectedProduct?.CRM || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                              />
-                            </div>
-                          )}
-                          {selectedProduct?.tipo !== "Paciente" && (
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="emailResponsavel" className="text-right">
-                                Responsável
-                              </Label>
-                              <Input
-                                id="emailResponsavel"
-                                value={selectedProduct?.emailResponsavel || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                              />
-                            </div>
-                          )}
-                        </div>
+                        )}
                         <DialogFooter>
                           <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
                         </DialogFooter>
@@ -231,7 +180,6 @@ export default function TableCadastros() {
           </TableBody>
         </Table>
       </div>
-
       {totalPages > 1 && (
         <Pagination>
           <PaginationContent>
@@ -242,11 +190,7 @@ export default function TableCadastros() {
             )}
             {[...Array(totalPages)].map((_, pageIndex) => (
               <PaginationItem key={pageIndex + 1}>
-                <PaginationLink
-                  href="#"
-                  isActive={currentPage === pageIndex + 1}
-                  onClick={() => handlePageChange(pageIndex + 1)}
-                >
+                <PaginationLink href="#" isActive={currentPage === pageIndex + 1} onClick={() => handlePageChange(pageIndex + 1)}>
                   {pageIndex + 1}
                 </PaginationLink>
               </PaginationItem>
