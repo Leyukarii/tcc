@@ -23,7 +23,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import ProdutsFilters from "./FiltrosCadastros";
 
 import { useState, useEffect } from "react";
-import { getCadastros,getCadastroById  } from "@/Components/data/lista-cadastros";
+import { getCadastros,getCadastroById, deleteCadastro  } from "@/Components/data/lista-cadastros";
 import { Edit } from "lucide-react";
 
 export default function TableCadastros() {
@@ -33,18 +33,19 @@ export default function TableCadastros() {
   const [selectedProduct, setSelectedProduct] = useState(null); 
   const rowsPerPage = 6;
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedProducts = await getCadastros();
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const fetchedProducts = await getCadastros();
-        setProducts(fetchedProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -62,6 +63,19 @@ export default function TableCadastros() {
       console.error("Erro ao buscar os detalhes do produto:", error);
     }
   };
+
+  const handleDelete = async () => {
+    if (selectedProduct) {
+      const result = await deleteCadastro(selectedProduct.id);
+      if (result.success) {
+        setSelectedProduct(null); // Limpa o produto selecionado
+        fetchData();
+      } else {
+        console.error(result.message);
+      }
+    }
+  };
+
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -165,6 +179,7 @@ export default function TableCadastros() {
                           </div>
                         )}
                         <DialogFooter>
+                          <Button type="button" variant="destructive" onClick={handleDelete}>Delete</Button>
                           <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
                         </DialogFooter>
                       </DialogContent>

@@ -75,3 +75,40 @@ export async function getCadastroById(cpf,role) {
     }
 }
 
+
+export async function deleteCadastro(id,role){
+
+    if(role === 'patient'){
+        try {
+            const response = await api.delete(`/Patient/${id}`); // Substitua '/Employee/' pelo endpoint correto de delete
+            if (response.status === 200) {
+              console.log(`Cadastro com ID ${id} deletado com sucesso.`);
+              return { success: true, message: "Cadastro deletado com sucesso." };
+            } else {
+              console.error(`Erro ao deletar cadastro com ID ${id}:`, response.statusText);
+              return { success: false, message: "Erro ao deletar o cadastro." };
+            }
+          } catch (error) {
+            console.error(`Erro ao tentar deletar o cadastro com ID ${id}:`, error);
+            return { success: false, message: "Erro ao tentar deletar o cadastro." };
+        }
+
+    }else{
+        try {
+            const response = await api.delete(`/Employee/${id}`); // Substitua '/Employee/' pelo endpoint correto de delete
+            if (response.status === 200) {
+              console.log(`Cadastro com ID ${id} deletado com sucesso.`);
+              return { success: true, message: "Cadastro deletado com sucesso." };
+            } else {
+              console.error(`Erro ao deletar cadastro com ID ${id}:`, response.statusText);
+              return { success: false, message: "Erro ao deletar o cadastro." };
+            }
+          } catch (error) {
+            console.error(`Erro ao tentar deletar o cadastro com ID ${id}:`, error);
+            return { success: false, message: "Erro ao tentar deletar o cadastro." };
+        }
+    }
+
+
+}
+
