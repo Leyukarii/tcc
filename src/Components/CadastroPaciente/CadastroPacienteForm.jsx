@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InputTw from '../Forms/InputTw';
 import Button1 from '../Forms/Button1';
 import ValidaCPF from '../validaCPF';
-import { createPatient } from "../../services/patientService";
+import { createPatient } from '../data/patient';
 import styles from './CadastroPacienteForm.module.css';
 
 const CadastroPacienteForm = () => {
@@ -34,26 +34,25 @@ const CadastroPacienteForm = () => {
         }
     };
     
-    
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (cpfError) {
             setFormError('Por favor, corrija o CPF antes de enviar.');
             return;
         }
-
+    
         try {
-            await createPatient({
+            const response = await createPatient({
                 name,
                 cpf,
-                birthDate,
+                birthDate: new Date(birthDate).toISOString(),  // Converte para o formato ISO
                 phone,
                 email,
                 observations
             });
+    
             if (response && response.status === 200) {
                 setFormSuccess('Paciente cadastrado com sucesso!');
                 setFormError('');
@@ -73,6 +72,7 @@ const CadastroPacienteForm = () => {
             setFormSuccess('');
         }
     };
+    
 
     return (
         <section className="animeLeft">

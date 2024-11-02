@@ -1,13 +1,22 @@
-export async function getItensEstoque(){
+import api from '@/axios/config'; // Certifique-se de que a configuração do axios está correta
 
-    let cadastros = [
-        {id: '1', name: 'Medicamento A', dosagem: '5ml' ,qtd:'5', sala:'A', prateleira:'1' },
-        {id: '2', name: 'Medicamento B', dosagem: '10g', qtd:'2', sala:'B', prateleira:'2'  },
-        {id: '3', name: 'Medicamento C', dosagem: 'x', qtd:'1', sala:'A', prateleira:'2' },
-        {id: '4', name: 'Medicamento D', dosagem: 'y', qtd:'0', sala:'B', prateleira:'3' },
-        {id: '5', name: 'Medicamento E', dosagem: 'z', qtd:'15', sala:'A', prateleira:'4' },
-        {id: '6', name: 'Medicamento F', dosagem: 'z', qtd:'0', sala:'A', prateleira:'5' },
-    ]
+export async function getItensEstoque() {
+  try {
+    const response = await api.get('/StockRoom/AvailableMedicaments'); // Substitua pelo endpoint correto
+    const { data } = response.data; // Assumindo que os dados estão em response.data.data
 
-    return cadastros
+    console.log(response)
+    const cadastros = data.map((item) => ({
+      id: item.id,
+      name: item.medicamentName,
+      dosagem: item.medicamentDosage,
+      qtd: item.quantity.toString(),
+      sala: item.stockRoomName,
+    }));
+
+    return cadastros;
+  } catch (error) {
+    console.error("Erro ao buscar itens de estoque:", error);
+    return []; // Retorna uma lista vazia em caso de erro
+  }
 }

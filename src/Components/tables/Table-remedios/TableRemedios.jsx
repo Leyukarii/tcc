@@ -106,9 +106,9 @@ export default function TableRemedios({ refresh }) {
               paginatedProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.id}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.dosagem}</TableCell>
-                  <TableCell>{product.uniMedida}</TableCell>
+                  <TableCell>{product.description}</TableCell>
+                  <TableCell>{product.dosage}</TableCell>
+                  <TableCell>{product.measure}</TableCell>
 
                   {/* DIALOG */}
                   <Dialog>
@@ -131,7 +131,7 @@ export default function TableRemedios({ refresh }) {
                           </Label>
                           <Input
                             id="name"
-                            value={selectedProduct?.name || ''}
+                            value={selectedProduct?.description || ''}
                             onChange={handleInputChange}
                             className="col-span-3"
                           />
@@ -142,7 +142,7 @@ export default function TableRemedios({ refresh }) {
                           </Label>
                           <Input
                             id="dosagem"
-                            value={selectedProduct?.dosagem || ''}
+                            value={selectedProduct?.dosage || ''}
                             onChange={handleInputChange}
                             className="col-span-3"
                           />
@@ -153,7 +153,7 @@ export default function TableRemedios({ refresh }) {
                           </Label>
                           <Input
                             id="uniMedida"
-                            value={selectedProduct?.uniMedida || ''}
+                            value={selectedProduct?.measure || ''}
                             onChange={handleInputChange}
                             className="col-span-3"
                           />
