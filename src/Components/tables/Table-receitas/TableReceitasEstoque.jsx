@@ -22,16 +22,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 import { getItensReceitaById, getReceitas } from "@/Components/data/lista-receitas";
-
-import { Edit, Package } from "lucide-react";
+import { Edit } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 
 export default function TableReceitasEstoque() {
   const [products, setProducts] = useState([]); // State for fetched products
   const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
-  const [itens, setItens] = useState([]); // State for fetched items
+  const [selectedProduct, setSelectedProduct] = useState(null); // Detailed product for viewing
   const [feedback, setFeedback] = useState(null); // State para mensagem de feedback
   const rowsPerPage = 6; // Number of items per page
 
@@ -60,13 +58,12 @@ export default function TableReceitasEstoque() {
   };
 
   const handleDialogOpen = async (product) => {
-    setSelectedProduct(product);
     try {
-      const fetchedItens = await getItensReceitaById(product.id); // Fetch items by prescription ID
-      setItens(fetchedItens); // Set fetched items in state
+      const receitaDetalhada = await getItensReceitaById(product.id); // Fetch detailed product data by ID
+      setSelectedProduct(receitaDetalhada); // Set detailed product in state
     } catch (error) {
-      console.error("Error fetching items for prescription:", error);
-      setItens([]); // Clear items if there's an error
+      console.error("Error fetching detailed prescription:", error);
+      setSelectedProduct(null); // Clear selected product if there's an error
     }
   };
 
@@ -107,10 +104,9 @@ export default function TableReceitasEstoque() {
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.cpf}</TableCell>
-                  <TableCell>{product.data}</TableCell>
+                  <TableCell>{product.data || "Data não disponível"}</TableCell>
 
                   {/* DIALOG */}
-
                   <Dialog onOpenChange={(isOpen) => isOpen && handleDialogOpen(product)}>
                     <DialogTrigger>
                       <TableCell>
@@ -118,86 +114,91 @@ export default function TableReceitasEstoque() {
                       </TableCell>
                     </DialogTrigger>
                     <DialogContent className='max-w-4xl' >
-                      <DialogHeader>
-                        <DialogTitle>Receita médica</DialogTitle>
-                        <DialogDescription className="space-x-10">
-                          <span>Data emissão: {product.data}</span>
-                          <span>Local: {product.local}</span>
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="name" className="text-right">
-                            Paciente / CPF
-                          </Label>
-                          <Input id="name" value={product.name} readOnly className="col-span-2" />
-                          <Input id="cpf" value={product.cpf} readOnly className="col-span-1" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="nameMedico" className="text-right">
-                            Médico / CRM
-                          </Label>
-                          <Input id="nameMedico" value={product.nomeMedico} readOnly className="col-span-2" />
-                          <Input id="CRM" value={product.CRM} readOnly className="col-span-1" />
-                        </div>
-                        {/* TABELA DE ITENS DA RECEITA */}
-                        <div className="mt-4">
-                          <h3 className="text-lg font-medium">Itens da Receita</h3>
-                          <div className="max-h-60 overflow-y-auto"> {/* Define height and scroll */}
-                            <Table>
-                              <TableHeader>
-                                <TableHead>ID</TableHead>
-                                <TableHead>Nome do Remédio</TableHead>
-                                <TableHead>Quantidade</TableHead>
-                                <TableHead>Descrição</TableHead>
-                              </TableHeader>
-                              <TableBody>
-                                {itens.map((item) => (
-                                  <TableRow key={item.id}>
-                                    <TableCell>{item.id}</TableCell>
-                                    <TableCell>{item.nomeRemedio}</TableCell>
-                                    <TableCell>{item.qtd}</TableCell>
-                                    <TableCell>{item.descricao}</TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <DialogClose>
-                          <Button variant='outline'>Fechar</Button>
-                        </DialogClose>
-                        {/* RETIRAR RECEITA */}
-
-                        <Dialog>
-                          <DialogTrigger>
-                            <Button>Retirar receita</Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Deseja fazer a retirada?</DialogTitle>
-                              <DialogDescription>
-                                Valide os remédios da receita com os que foram retirados da estante!
-                              </DialogDescription>
-                            </DialogHeader>
-
-                            {feedback && (
-                              <div className={`text-center my-4 ${feedback.includes("sucesso") ? "text-green-500" : "text-red-500"}`}>
-                                {feedback}
+                      {selectedProduct && (
+                        <>
+                          <DialogHeader>
+                            <DialogTitle>Receita médica</DialogTitle>
+                            <DialogDescription className="space-x-10">
+                              <span>Data emissão: {selectedProduct.data}</span>
+                              <span>Local: {selectedProduct.local}</span>
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="name" className="text-right">
+                                Paciente / CPF
+                              </Label>
+                              <Input id="name" value={selectedProduct.name} readOnly className="col-span-2" />
+                              <Input id="cpf" value={selectedProduct.cpf} readOnly className="col-span-1" />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="nameMedico" className="text-right">
+                                Médico / CRM
+                              </Label>
+                              <Input id="nameMedico" value={selectedProduct.nomeMedico} readOnly className="col-span-2" />
+                              <Input id="CRM" value={selectedProduct.CRM} readOnly className="col-span-1" />
+                            </div>
+                            {/* TABELA DE ITENS DA RECEITA */}
+                            <div className="mt-4">
+                              <h3 className="text-lg font-medium">Itens da Receita</h3>
+                              <div className="max-h-60 overflow-y-auto"> {/* Define height and scroll */}
+                                <Table>
+                                  <TableHeader>
+                                    <TableHead>ID</TableHead>
+                                    <TableHead>Nome do Remédio</TableHead>
+                                    <TableHead>Quantidade</TableHead>
+                                    <TableHead>Descrição</TableHead>
+                                    <TableHead>Observação</TableHead>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {selectedProduct.itens.map((item) => (
+                                      <TableRow key={item.id}>
+                                        <TableCell>{item.id}</TableCell>
+                                        <TableCell>{item.nomeRemedio}</TableCell>
+                                        <TableCell>{item.qtd}</TableCell>
+                                        <TableCell>{item.descricao}</TableCell>
+                                        <TableCell>{item.observacao}</TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
                               </div>
-                            )}
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <DialogClose>
+                              <Button variant='outline'>Fechar</Button>
+                            </DialogClose>
+                            {/* RETIRAR RECEITA */}
+                            <Dialog>
+                              <DialogTrigger>
+                                <Button>Retirar receita</Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Deseja fazer a retirada?</DialogTitle>
+                                  <DialogDescription>
+                                    Valide os remédios da receita com os que foram retirados da estante!
+                                  </DialogDescription>
+                                </DialogHeader>
 
-                            <DialogFooter>
-                              <DialogClose>
-                                <Button variant='outline'>Fechar</Button>
-                              </DialogClose>
-                              <Button onClick={handleRetirarClick}>Validar</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </DialogFooter>
+                                {feedback && (
+                                  <div className={`text-center my-4 ${feedback.includes("sucesso") ? "text-green-500" : "text-red-500"}`}>
+                                    {feedback}
+                                  </div>
+                                )}
+
+                                <DialogFooter>
+                                  <DialogClose>
+                                    <Button variant='outline'>Fechar</Button>
+                                  </DialogClose>
+                                  <Button onClick={handleRetirarClick}>Validar</Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          </DialogFooter>
+                        </>
+                      )}
                     </DialogContent>
                   </Dialog>
                 </TableRow>

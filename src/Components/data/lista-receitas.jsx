@@ -1,10 +1,9 @@
 import api from "@/axios/config";
 
-
-// Função para obter as receitas formatadas
+// Função para obter a lista básica de receitas
 export async function getReceitas() {
   try {
-    const response = await api.get('/Prescription'); // Substitua pelo endpoint correto
+    const response = await api.get('/Prescription'); // Endpoint correto para obter lista básica
     const { data } = response.data; // Assumindo que os dados estão em response.data.data
 
     // Formata os dados para corresponder à estrutura esperada
@@ -13,10 +12,7 @@ export async function getReceitas() {
       name: item.patientName,
       cpf: item.cpf,
       nomeMedico: item.doctorName,
-      CRM: "faltou", // Caso a API não forneça o CRM, você pode deixá-lo vazio ou adicionar um valor padrão
-      data: "faltou colocar a data na API", // Mesma lógica para a data
-      local: "faltou colocar o local na API", // Mesma lógica para o local
-      itens: [] // Se houver itens na API, você pode mapeá-los aqui, caso contrário, deixe vazio
+      // Dados básicos sem CRM, data ou local
     }));
 
     return receitas;
@@ -26,21 +22,40 @@ export async function getReceitas() {
   }
 }
 
+// Função para obter detalhes completos de uma receita, incluindo itens, por ID
 export async function getItensReceitaById(id) {
-    try {
-      const response = await api.get(`/Prescription/GetPrescriptionItems/${id}`); // Substitua pelo endpoint correto
-      const { data } = response.data; // Assumindo que os dados estão em response.data.data
+  try {
+    const response = await api.get(`/Prescription/${id}`); // Endpoint correto para obter detalhes da receita
+    const { data } = response.data; // Assumindo que os dados estão em response.data.data
 
-      const itens = data.map((item) => ({
+    // Formata a data para o formato DD/MM/YYYY
+    const formattedDate = new Date(data.date).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    // Formata os dados para corresponder à estrutura esperada
+    const receitaDetalhada = {
+      id: data.id.toString(),
+      name: data.patientName,
+      cpf: data.cpf,
+      nomeMedico: data.doctorName,
+      CRM: data.crm || "CRM não disponível",
+      data: formattedDate || "Data não disponível",
+      local: data.local || "Local não disponível",
+      itens: data.items.map((item) => ({
         id: item.id,
-        nomeRemedio: item.name,
-        qtd: item.quantity,
-        descricao: `${item.dosage}${item.measure}`
-      }));
-  
-      return itens;
-    } catch (error) {
-      console.error("Erro ao buscar itens da receita:", error);
-      return []; // Retorna uma lista vazia em caso de erro
-    }
+        nomeRemedio: item.medicamentName,
+        qtd: item.prescribedQuantity,
+        descricao: `${item.medicamentDosage}${item.medicamentMeasure}`,
+        observacao: item.observation || "Nenhuma observação",
+      })),
+    };
+
+    return receitaDetalhada;
+  } catch (error) {
+    console.error("Erro ao buscar itens da receita:", error);
+    return null; // Retorna null em caso de erro
   }
+}
