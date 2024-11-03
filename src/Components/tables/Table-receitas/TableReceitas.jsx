@@ -17,12 +17,13 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 import ProdutsFilters from "./FiltroReceitas";
-import { getReceitas } from "@/Components/data/lista-receitas";
+import { getItensReceitaById, getReceitas } from "@/Components/data/lista-receitas";
+
 import { Edit } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 
@@ -33,6 +34,7 @@ export default function TableReceitas() {
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
   const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
+  const [itens, setItens] = useState([]); // State for fetched items
   const rowsPerPage = 6; // Number of items per page
 
   useEffect(() => {
@@ -57,9 +59,18 @@ export default function TableReceitas() {
     setCurrentPage(newPage);
   };
 
-  const handleEditClick = (product) => {
+  const handleEditClick = async (product) => {
     setSelectedProduct(product); // Set the product to be edited
     setIsModalOpen(true); // Open the modal
+    
+    // Fetch items for the selected prescription by ID
+    try {
+      const fetchedItens = await getItensReceitaById(product.id);
+      setItens(fetchedItens);
+    } catch (error) {
+      console.error("Error fetching items for prescription:", error);
+      setItens([]); // Clear items if there's an error
+    }
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -93,8 +104,8 @@ export default function TableReceitas() {
 
                   {/* DIALOG */}
 
-                  <Dialog>
-                    <DialogTrigger>
+                  <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                    <DialogTrigger onClick={() => handleEditClick(product)}>
                       <TableCell>
                         <Edit className="w-4 cursor-pointer"/>
                       </TableCell>
@@ -112,15 +123,15 @@ export default function TableReceitas() {
                           <Label htmlFor="name" className="text-right">
                             Paciente / CPF
                           </Label>
-                          <Input id="name" value={product.name} className="col-span-2"/>
-                          <Input id="cpf" value={product.cpf} className="col-span-1" />
+                          <Input id="name" value={product.name} readOnly className="col-span-2" />
+                          <Input id="cpf" value={product.cpf} readOnly className="col-span-1" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="nameMedico" className="text-right">
                             Médico / CRM
                           </Label>
-                          <Input id="nameMedico" value={product.nomeMedico} className="col-span-2" />
-                          <Input id="CRM" value={product.CRM} className="col-span-1" />
+                          <Input id="nameMedico" value={product.nomeMedico} readOnly className="col-span-2" />
+                          <Input id="CRM" value={product.CRM} readOnly className="col-span-1" />
                         </div>
                         {/* TABELA DE ITENS DA RECEITA */}
                         <div className="mt-4">
@@ -134,7 +145,7 @@ export default function TableReceitas() {
                                 <TableHead>Descrição</TableHead>
                               </TableHeader>
                               <TableBody>
-                                {product.itens.map((item) => (
+                                {itens.map((item) => (
                                   <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
                                     <TableCell>{item.nomeRemedio}</TableCell>
@@ -146,12 +157,6 @@ export default function TableReceitas() {
                             </Table>
                           </div>
                         </div>
-
-
-
-
-
-
                       </div>
                       <DialogFooter>
                         <DialogClose>
@@ -204,8 +209,6 @@ export default function TableReceitas() {
           </PaginationContent>
         </Pagination>
       )}
-
-     
     </div>
   );
 }

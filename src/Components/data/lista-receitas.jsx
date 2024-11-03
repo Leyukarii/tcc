@@ -1,251 +1,46 @@
-export async function getReceitas(){
+import api from "@/axios/config";
 
-    let cadastros = [
-        {
-            id: '1', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '2', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '3', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '4', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '5', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '6', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '7', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '8', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '9', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '10', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '11', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '12', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '13', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        {
-            id: '14', name: 'Nome A', cpf:'000.000.000-00',nomeMedico:"Doutor 01",CRM:"1515", data:'01/01/2024',local:'Campo Largo',
-            itens:[
-                {id:1, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:2, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:3, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:4, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:5, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:6, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:7, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                {id:8, nomeRemedio:"Remédio 01",qtd:10,descricao:"descrição do remédio 1"},
-                {id:9, nomeRemedio:"Remédio 02",qtd:5,descricao:"descrição do remédio 2"},
-                {id:10, nomeRemedio:"Remédio 03",qtd:2,descricao:"descrição do remédio 3"},
-                
-            ]
-        },
-        
-    ]
 
-    return cadastros
+// Função para obter as receitas formatadas
+export async function getReceitas() {
+  try {
+    const response = await api.get('/Prescription'); // Substitua pelo endpoint correto
+    const { data } = response.data; // Assumindo que os dados estão em response.data.data
+
+    // Formata os dados para corresponder à estrutura esperada
+    const receitas = data.map((item) => ({
+      id: item.id.toString(),
+      name: item.patientName,
+      cpf: item.cpf,
+      nomeMedico: item.doctorName,
+      CRM: "faltou", // Caso a API não forneça o CRM, você pode deixá-lo vazio ou adicionar um valor padrão
+      data: "faltou colocar a data na API", // Mesma lógica para a data
+      local: "faltou colocar o local na API", // Mesma lógica para o local
+      itens: [] // Se houver itens na API, você pode mapeá-los aqui, caso contrário, deixe vazio
+    }));
+
+    return receitas;
+  } catch (error) {
+    console.error("Erro ao buscar receitas:", error);
+    return [];
+  }
 }
-// {id: '2', name: 'Nome B', cpf:'000.000.000-00' , data:'01/01/2024'},
-//         {id: '3', name: 'Nome C', cpf:'000.000.000-00' , data:'01/05/2024'},
-//         {id: '4', name: 'Nome D', cpf:'000.000.000-00' , data:'01/01/2024'},
-//         {id: '5', name: 'Nome E', cpf:'000.000.000-00' , data:'01/05/2024'},
-//         {id: '6', name: 'Nome F', cpf:'000.000.000-00' , data:'01/01/2024'},
-//         {id: '7', name: 'Nome G', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '9', name: 'Nome H', cpf:'000.000.000-00' , data:'01/01/2024'},
-//         {id: '8', name: 'Nome I', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '10', name: 'Nome J', cpf:'000.000.000-00' , data:'01/05/2024'},
-//         {id: '11', name: 'Nome K', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '12', name: 'Nome L', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '5', name: 'Nome E', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '6', name: 'Nome F', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '7', name: 'Nome G', cpf:'000.000.000-00' , data:'01/01/2024'},
-//         {id: '9', name: 'Nome H', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '8', name: 'Nome I', cpf:'000.000.000-00' , data:'01/01/2024'},
-//         {id: '10', name: 'Nome J', cpf:'000.000.000-00' , data:'15/02/2024'},
-//         {id: '11', name: 'Nome K', cpf:'000.000.000-00' , data:'30/03/2024'},
-//         {id: '12', name: 'Nome L', cpf:'000.000.000-00' , data:'30/03/2024'}
+
+export async function getItensReceitaById(id) {
+    try {
+      const response = await api.get(`/Prescription/GetPrescriptionItems/${id}`); // Substitua pelo endpoint correto
+      const { data } = response.data; // Assumindo que os dados estão em response.data.data
+
+      const itens = data.map((item) => ({
+        id: item.id,
+        nomeRemedio: item.name,
+        qtd: item.quantity,
+        descricao: `${item.dosage}${item.measure}`
+      }));
+  
+      return itens;
+    } catch (error) {
+      console.error("Erro ao buscar itens da receita:", error);
+      return []; // Retorna uma lista vazia em caso de erro
+    }
+  }
