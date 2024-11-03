@@ -1,27 +1,114 @@
-export async function getCadastros(){
+import api from "@/axios/config"; // Certifique-se de que o caminho está correto
 
-    let cadastros = [
-        {id: '1', name: 'Nome Aa', cpf:'000.000.000-00' , tipo:'Estoquista', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '2', name: 'Nome B', cpf:'000.000.000-00' , tipo:'Paciente', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '3', name: 'Nome C', cpf:'000.000.000-00' , tipo:'Estoquista', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '4', name: 'Nome D', cpf:'000.000.000-00' , tipo:'Paciente', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '5', name: 'Nome E', cpf:'000.000.000-00' , tipo:'Estoquista', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '6', name: 'Nome F', cpf:'000.000.000-00' , tipo:'Paciente', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '7', name: 'Nome G', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '9', name: 'Nome H', cpf:'000.000.000-00' , tipo:'Paciente', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '8', name: 'Nome I', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '10', name: 'Nome J', cpf:'000.000.000-00' , tipo:'Estoquista', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '11', name: 'Nome K', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '12', name: 'Nome L', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '5', name: 'Nome E', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '6', name: 'Nome F', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '7', name: 'Nome G', cpf:'000.000.000-00' , tipo:'Paciente', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '9', name: 'Nome H', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '8', name: 'Nome I', cpf:'000.000.000-00' , tipo:'Paciente', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '10', name: 'Nome J', cpf:'000.000.000-00' , tipo:'Medico', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '11', name: 'Nome K', cpf:'000.000.000-00' , tipo:'RH', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'},
-        {id: '12', name: 'Nome L', cpf:'000.000.000-00' , tipo:'RH', email:'lucas.lima@email.com', dataNascimento:'02/09/2002',telefone:'9 9111-0168',CRM:35246,emailResponsavel:'lucas@resp.com'}
-    ]
+// Função para obter todos os cadastros
+export async function getCadastros() {
+  try {
+    const response = await api.get('/Employee/GetPersons'); // Substitua '/Employee/GetPersons' pelo endpoint correto
+    const { data } = response.data;
 
-    return cadastros
+    // Mapeia os dados para a estrutura esperada
+    const cadastros = data.map((item) => ({
+      id: item.id,
+      uniqueId: item.uniqueId,
+      name: item.name,
+      cpf: item.cpf,
+      role: item.role,
+    }));
+
+    return cadastros;
+  } catch (error) {
+    console.error("Erro ao buscar cadastros:", error);
+    return []; // Retorna uma lista vazia em caso de erro
+  }
 }
+
+// Função para obter os detalhes de um cadastro específico pelo ID
+export async function getCadastroById(cpf,role) {
+    if(role === 'patient'){
+        try {
+          const response = await api.get(`/Patient/${cpf}`); // Substitua '/Employee/GetPerson/' pelo endpoint correto
+          const data = response.data.data;
+      
+          // Mapeia os dados para o formato completo esperado
+          const cadastroDetalhado = {
+            id: data.id,
+            name: data.name,
+            cpf: data.cpf,
+            role: role,
+            email: data.mail,
+            dataNascimento: data.birthDay,
+            telefone: data.phoneNumber,
+            CRM: '',
+            emailResponsavel: '',
+            obs: data.observations
+          };
+      
+          return cadastroDetalhado;
+        } catch (error) {
+          console.error(`Erro ao buscar detalhes do cadastro com ID ${id}:`, error);
+          return null; // Retorna null em caso de erro
+        }
+    }else{
+        try {
+            const response = await api.get(`/Employee/${cpf}`); // Substitua '/Employee/GetPerson/' pelo endpoint correto
+            const data = response.data.data;
+        
+            // Mapeia os dados para o formato completo esperado
+            const cadastroDetalhado = {
+              id: data.id,
+              uniqueId: data.uniqueId,
+              name: data.name,
+              cpf: data.cpf,
+              role: role,
+              email: data.mail,
+              dataNascimento: data.birthDate,
+              telefone: data.phone,
+              CRM: data.crm,
+              emailResponsavel: data.responsibleMail,
+            };
+        
+            return cadastroDetalhado;
+          } catch (error) {
+            console.error(`Erro ao buscar detalhes do cadastro com ID ${id}:`, error);
+            return null; // Retorna null em caso de erro
+          }
+    }
+}
+
+
+export async function deleteCadastro(id,role){
+
+    if(role == 'patient'){
+        try {
+            const response = await api.delete(`/Patient/${id}`); // Substitua '/Employee/' pelo endpoint correto de delete
+            if (response.status === 200) {
+              console.log(`Cadastro com ID ${id} deletado com sucesso.`);
+              return { success: true, message: "Cadastro deletado com sucesso." };
+            } else {
+              console.error(`Erro ao deletar cadastro com ID ${id}:`, response.statusText);
+              return { success: false, message: "Erro ao deletar o cadastro." };
+            }
+          } catch (error) {
+            console.error(`Erro ao tentar deletar o cadastro com ID ${id}:`, error);
+            return { success: false, message: "Erro ao tentar deletar o cadastro." };
+        }
+
+    }else{
+        try {
+            const response = await api.delete(`/Employee/${id}`); // Substitua '/Employee/' pelo endpoint correto de delete
+            if (response.status === 200) {
+              console.log(`Cadastro com ID ${id} deletado com sucesso.`);
+              return { success: true, message: "Cadastro deletado com sucesso." };
+            } else {
+              console.error(`Erro ao deletar cadastro com ID ${id}:`, response.statusText);
+              return { success: false, message: "Erro ao deletar o cadastro." };
+            }
+          } catch (error) {
+            console.error(`Erro ao tentar deletar o cadastro com ID ${id}:`, error);
+            return { success: false, message: "Erro ao tentar deletar o cadastro." };
+        }
+    }
+
+
+}
+

@@ -25,14 +25,32 @@ const CadastroFuncionarioForm = () => {
   const [success, setSuccess] = useState(null);
 
   const handleCPFChange = (event) => {
-    const value = event.target.value;
-    setCpf(value); 
+    // Limita os caracteres para 11 dígitos antes de aplicar a máscara
+    const value = event.target.value.replace(/\D/g, '').slice(0, 11); // Limita a 11 dígitos puros
+    const formattedCPF = value
+        .replace(/(\d{3})(\d)/, '$1.$2')   // Adiciona o primeiro ponto após os três primeiros dígitos
+        .replace(/(\d{3})(\d)/, '$1.$2')   // Adiciona o segundo ponto após o segundo grupo de três dígitos
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço antes dos dois últimos dígitos
+    
+    setCpf(formattedCPF); // Atualiza o estado com o CPF formatado
+    
+    // Valida o CPF e define o erro se inválido
     if (!ValidaCPF(value)) {
         setCpfError('CPF inválido');
     } else {
         setCpfError('');
     }
 };
+const handlePhoneChange = (event) => {
+    const value = event.target.value.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
+    const formattedPhone = value
+        .replace(/(\d{2})(\d)/, '($1) $2') // Adiciona os parênteses em volta do DDD
+        .replace(/(\d{5})(\d)/, '$1-$2')   // Adiciona o hífen após o quinto dígito
+        .slice(0, 15); // Limita o número de caracteres para o formato (xx) x xxxx-xxxx
+
+    telefone.onChange({ target: { name: telefone.name, value: formattedPhone } }); // Atualiza o estado usando a prop `onChange`
+};
+
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -99,8 +117,16 @@ return (
                   <InputTw label="Data Nascimento" type="date" name="dataNascimento" {...dataNascimento} className="w-full" />
               </div>
               <div className="w-4/12">
-                  <InputTw label="Telefone" type="number" name="telefone" {...telefone} className="w-full" />
-              </div>
+                <InputTw 
+                    label="Telefone" 
+                    type="text" // Altere para "text" para permitir a máscara
+                    name="telefone" 
+                    value={telefone.value} 
+                    onChange={handlePhoneChange} 
+                    className="w-full" 
+                />
+            </div>
+
           </div>
 
           <label htmlFor="cargoSelect" className={styles.label}>Cargo</label>

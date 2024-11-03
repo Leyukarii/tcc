@@ -60,12 +60,10 @@ const paginatedProducts = products.slice(startIndex, endIndex); // Slice product
           <div className="border rounded-lg p-4">
               <Table>
               <TableHeader>
-                  <TableHead>Id</TableHead>
                   <TableHead>Nome</TableHead>
                   <TableHead>Dosagem</TableHead>
                   <TableHead>Quantidade</TableHead>
                   <TableHead>Sala</TableHead>
-                  <TableHead>Prateleira</TableHead>
               </TableHeader>
 
               <TableBody>
@@ -76,12 +74,10 @@ const paginatedProducts = products.slice(startIndex, endIndex); // Slice product
                   ) : products.length > 0 ? (
                   paginatedProducts.map((product, i) => (
                       <TableRow key={product.id}>
-                      <TableCell>{product.id}</TableCell>
                       <TableCell>{product.name}</TableCell>
                       <TableCell>{product.dosagem}</TableCell>
                       <TableCell>{product.qtd}</TableCell>
                       <TableCell>{product.sala}</TableCell>
-                      <TableCell>{product.prateleira}</TableCell>
                       </TableRow>
                   ))
                   ) : (

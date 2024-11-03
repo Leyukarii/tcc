@@ -133,9 +133,14 @@ const CadastroReceitaForm = () => {
                   <Label htmlFor="qtd">Quantidade</Label>
                   <Input
                     id='qtd'
+                    type='number'
+                    min="1"
                     className="w-[100px]"
                     value={novoItem.qtd}
-                    onChange={(e) => setNovoItem({ ...novoItem, qtd: e.target.value })}
+                    onChange={(e) => {
+                      const intValue = parseInt(e.target.value, 10); // Converte o valor para int
+                      setNovoItem({ ...novoItem, qtd: intValue > 0 ? intValue : '' }); // Apenas atualiza se for > 0
+                    }}
                   />
                 </div>
                 <div>

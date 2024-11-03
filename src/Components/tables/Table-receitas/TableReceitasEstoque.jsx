@@ -31,6 +31,7 @@ export default function TableReceitasEstoque() {
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
   const rowsPerPage = 6; // Number of items per page
+  const [feedback, setFeedback] = useState(null); // State para mensagem de feedback
 
   const navigate = useNavigate(); // Cria o hook de navegação
 
@@ -56,9 +57,14 @@ export default function TableReceitasEstoque() {
     setCurrentPage(newPage);
   };
 
-  const handleRedirect = (product) => {
-    // Redireciona para a página de destino com o produto como estado
-    navigate('/retirada', { state: { product } });
+  // Função para simular a resposta da API
+  const simulateApiResponse = () => {
+    return Math.random() > 0.5 ? "Success" : "Error";
+  };
+
+  const handleRetirarClick = () => {
+    const response = simulateApiResponse();
+    setFeedback(response === "Success" ? "Itens validados com sucesso,retirada concluida!" : "Erro na validação.");
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -75,7 +81,6 @@ export default function TableReceitasEstoque() {
             <TableHead>CPF</TableHead>
             <TableHead>Data Emissão</TableHead>
             <TableHead>Visualizar</TableHead>
-            <TableHead>Retirar</TableHead>
           </TableHeader>
 
           <TableBody>
@@ -149,14 +154,41 @@ export default function TableReceitasEstoque() {
                       </div>
                       <DialogFooter>
                         <DialogClose>
-                          <Button>Fechar</Button>
+                          <Button variant='outline'>Fechar</Button>
                         </DialogClose>
+                        {/* RETIRAR RECEITA */}
+
+                        <Dialog>
+                          <DialogTrigger>
+                            <Button >Retirar receita</Button>
+                          </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Deseja fazer a retirada?</DialogTitle>
+                            <DialogDescription >
+                              Valide os remédios da receita com os que foram retirados da estante!!
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          {
+                            feedback && (
+                            <div className={`text-center my-4 ${feedback.includes("sucesso") ? "text-green-500" : "text-red-500"}`}>
+                              {feedback}
+                            </div>
+                            )
+                          }
+
+                          <DialogFooter>
+                            <DialogClose>
+                              <Button variant='outline'>Fechar</Button>
+                            </DialogClose>
+                            <Button onClick={handleRetirarClick}>Validar</Button>
+                          </DialogFooter>
+                        </DialogContent>
+                        </Dialog>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <TableCell>
-                    <Package className="w-5 h-5 cursor-pointer" onClick={() => handleRedirect(product)}/>
-                  </TableCell>
                 </TableRow>
 
                 
