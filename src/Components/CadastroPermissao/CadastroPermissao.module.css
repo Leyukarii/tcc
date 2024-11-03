@@ -1,0 +1,25 @@
+.cadastropermissao{
+    position: relative;
+    display: block;
+    min-height: 100vh;
+    gap: 2rem;
+    overflow: hidden;
+  }
+    
+  .formpermissao{
+    max-width: 30rem; 
+    padding: 2rem;
+  }
+  
+
+  @media (max-width: 40rem){
+    .cadastropermissao{
+      grid-template-columns: 1fr;
+    }
+    .cadastropermissao::before{
+      display: none;
+    }
+    .formpermissao{
+      max-width: 100%;
+    }
+  }

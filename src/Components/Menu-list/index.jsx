@@ -4,7 +4,7 @@
   import MenuItem from "antd/es/menu/MenuItem";
   import { useState, useEffect } from 'react';
   import { Link, useLocation } from "react-router-dom";
-  import { LogOut } from "lucide-react";
+  import { LogOut, Settings } from "lucide-react";
 
   export default function MenuList() {
     const location = useLocation();
@@ -40,7 +40,10 @@
           </MenuItem>
           <MenuItem key="nova-senha" icon={<EditOutlined />}>
           <Link to="/nova-senha">Nova Senha</Link>
-        </MenuItem>
+          </MenuItem>
+          <MenuItem key="configuracoes" icon={<Settings className="w-4"  />}>
+          <Link to="/configuracoes">Configurações</Link>
+          </MenuItem>
           <MenuItem key="sair" icon={<LogOut className="w-4"/>}>
           <Link to="/">Sair</Link>
           </MenuItem>
