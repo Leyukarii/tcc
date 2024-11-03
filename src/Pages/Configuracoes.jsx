@@ -1,60 +1,38 @@
-import ModalPages from "@/Components/MoldalPages";
-import SidebarMenu from "@/Components/Sidebar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs"
+import SidebarMenu from "../Components/Sidebar/index"
+import ModalPages from "@/Components/MoldalPages"
+import CadastroPaciente from "@/Components/CadastroPaciente/CadastroPaciente"
+import CadastroFuncionario from "@/Components/CadastroFuncionario/CadastroFuncionario"
+import TableCadastros from "@/Components/tables/Table-cadastros/TableCadastros"
+import '../App.css';
+import style from './Navbar.module.css';
+import CadastroPermissao from "@/Components/CadastroPermissao/CadastroPermissao"
 
-export default function Configuracoes() {
+
+export default function Configuracoes(){
     return (
-        <div className="flex">
-            <SidebarMenu />
-            <div className="bg-slate-400 flex flex-1">
-            
-                <Tabs defaultValue='paciente' className='mt-5 w-full'>
-                    <ModalPages >
-                        <TabsList className='p-6'>
-                            <TabsTrigger className="" value="paciente">Pacientes</TabsTrigger>
-                        </TabsList>
-                    </ModalPages>
-                    <TabsContent value='paciente'>
-                        <div className="m-5 ">
-                            <h1 className="title2">Cadastro de Pacientes</h1>
-                            <div className="flex xl:w-[1200px] lg:w-[800px] md:w-[500px] gap-5">
-                                <div className="pt-5 w-full space-y-1">
-                                    <label htmlFor="name-paciente">Nome completo do paciente</label>
-                                    <input type="text" id="name-paciente" className="w-full rounded bg-slate-300 p-4" />
-                                </div>
-                                <div className="pt-5  space-y-1">
-                                    <label htmlFor="cpf-paciente">CPF</label>
-                                    <input type="text" id="cpf-paciente" className="rounded bg-slate-300 p-4" />
-                                </div>
-                            </div>
-
-                            <div className="flex xl:w-[1200px] lg:w-[800px] md:w-[500px] gap-5">
-                                <div className="pt-5 w-full space-y-1">
-                                    <label htmlFor="email-paciente">Email</label>
-                                    <input type="text" id="email-paciente" className="w-full rounded bg-slate-300 p-4" />
-                                </div>
-                                <div className="pt-5  space-y-1">
-                                    <label htmlFor="data-nascimento-paciente">Data Nacimento</label>
-                                    <input type="text" id="data-nascimento-paciente" className="rounded bg-slate-300 p-4" />
-                                </div>
-                                <div className="pt-5  space-y-1">
-                                    <label htmlFor="telefone-paciente">Telefone</label>
-                                    <input type="text" id="telefone-paciente" className="rounded bg-slate-300 p-4" />
-                                </div>
-                            </div>
-
-                            <div className="flex xl:w-[1200px] lg:w-[800px] md:w-[500px] gap-5">
-                                <div className="pt-5 w-full space-y-1">
-                                    <label htmlFor="telefone-paciente">Telefone</label>
-                                    <input type="text" id="telefone-paciente" className="rounded w-full bg-slate-300 p-4" />
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </TabsContent>
-                    
-                </Tabs>
-           
+        <div className="flex mx-auto space-y-4 w-full">
+            <SidebarMenu/>
+            <div className="block w-full">
+                    <Tabs defaultValue='permissoes' className='ml-5'>
+                        <ModalPages>
+                            <TabsList className='ml-6 p-6'>
+                                <TabsTrigger className={style.textoNav} value="permissoes">Permissões</TabsTrigger>
+                                <TabsTrigger className={style.textoNav} value="funcionarios">Funcionarios</TabsTrigger>
+                                <TabsTrigger className={style.textoNav} value="listaPessoas">Lista</TabsTrigger>
+                            </TabsList>
+                        </ModalPages>
+                        <TabsContent value='permissoes'>
+                            <CadastroPermissao />
+                        </TabsContent>
+                        <TabsContent value='funcionarios'>
+                            <CadastroFuncionario/>
+                        </TabsContent>
+                        <TabsContent value='listaPessoas'>
+                            <h1 className="title2">Cadastros</h1>
+                            <TableCadastros/>
+                        </TabsContent>
+                    </Tabs>
             </div>
         </div>
     )

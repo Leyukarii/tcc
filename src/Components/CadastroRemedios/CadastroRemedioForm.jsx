@@ -4,6 +4,8 @@ import Button1 from '../Forms/Button1';
 import useForm from '../../Hooks/useForm';
 import styles from './CadastroRemedioForm.module.css';
 import Input4 from '../Forms/Input4';
+import axios from 'axios';
+import TableRemedios from '../tables/Table-remedios/TableRemedios';
 import TableRemedios from '../tables/Table-remedios/TableRemedios';
 import api from '@/axios/config';
 
