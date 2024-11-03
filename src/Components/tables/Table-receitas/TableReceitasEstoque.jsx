@@ -21,7 +21,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-import { getReceitas } from "@/Components/data/lista-receitas";
+import { getItensReceitaById, getReceitas } from "@/Components/data/lista-receitas";
+
 import { Edit, Package } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 
@@ -30,8 +31,9 @@ export default function TableReceitasEstoque() {
   const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
-  const rowsPerPage = 6; // Number of items per page
+  const [itens, setItens] = useState([]); // State for fetched items
   const [feedback, setFeedback] = useState(null); // State para mensagem de feedback
+  const rowsPerPage = 6; // Number of items per page
 
   const navigate = useNavigate(); // Cria o hook de navegação
 
@@ -57,6 +59,17 @@ export default function TableReceitasEstoque() {
     setCurrentPage(newPage);
   };
 
+  const handleDialogOpen = async (product) => {
+    setSelectedProduct(product);
+    try {
+      const fetchedItens = await getItensReceitaById(product.id); // Fetch items by prescription ID
+      setItens(fetchedItens); // Set fetched items in state
+    } catch (error) {
+      console.error("Error fetching items for prescription:", error);
+      setItens([]); // Clear items if there's an error
+    }
+  };
+
   // Função para simular a resposta da API
   const simulateApiResponse = () => {
     return Math.random() > 0.5 ? "Success" : "Error";
@@ -64,7 +77,7 @@ export default function TableReceitasEstoque() {
 
   const handleRetirarClick = () => {
     const response = simulateApiResponse();
-    setFeedback(response === "Success" ? "Itens validados com sucesso,retirada concluida!" : "Erro na validação.");
+    setFeedback(response === "Success" ? "Itens validados com sucesso, retirada concluída!" : "Erro na validação.");
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -98,7 +111,7 @@ export default function TableReceitasEstoque() {
 
                   {/* DIALOG */}
 
-                  <Dialog>
+                  <Dialog onOpenChange={(isOpen) => isOpen && handleDialogOpen(product)}>
                     <DialogTrigger>
                       <TableCell>
                         <Edit className="w-4 cursor-pointer"/>
@@ -117,7 +130,7 @@ export default function TableReceitasEstoque() {
                           <Label htmlFor="name" className="text-right">
                             Paciente / CPF
                           </Label>
-                          <Input id="name" value={product.name} readOnly className="col-span-2"/>
+                          <Input id="name" value={product.name} readOnly className="col-span-2" />
                           <Input id="cpf" value={product.cpf} readOnly className="col-span-1" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -139,7 +152,7 @@ export default function TableReceitasEstoque() {
                                 <TableHead>Descrição</TableHead>
                               </TableHeader>
                               <TableBody>
-                                {product.itens.map((item) => (
+                                {itens.map((item) => (
                                   <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
                                     <TableCell>{item.nomeRemedio}</TableCell>
@@ -160,38 +173,34 @@ export default function TableReceitasEstoque() {
 
                         <Dialog>
                           <DialogTrigger>
-                            <Button >Retirar receita</Button>
+                            <Button>Retirar receita</Button>
                           </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Deseja fazer a retirada?</DialogTitle>
-                            <DialogDescription >
-                              Valide os remédios da receita com os que foram retirados da estante!!
-                            </DialogDescription>
-                          </DialogHeader>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Deseja fazer a retirada?</DialogTitle>
+                              <DialogDescription>
+                                Valide os remédios da receita com os que foram retirados da estante!
+                              </DialogDescription>
+                            </DialogHeader>
 
-                          {
-                            feedback && (
-                            <div className={`text-center my-4 ${feedback.includes("sucesso") ? "text-green-500" : "text-red-500"}`}>
-                              {feedback}
-                            </div>
-                            )
-                          }
+                            {feedback && (
+                              <div className={`text-center my-4 ${feedback.includes("sucesso") ? "text-green-500" : "text-red-500"}`}>
+                                {feedback}
+                              </div>
+                            )}
 
-                          <DialogFooter>
-                            <DialogClose>
-                              <Button variant='outline'>Fechar</Button>
-                            </DialogClose>
-                            <Button onClick={handleRetirarClick}>Validar</Button>
-                          </DialogFooter>
-                        </DialogContent>
+                            <DialogFooter>
+                              <DialogClose>
+                                <Button variant='outline'>Fechar</Button>
+                              </DialogClose>
+                              <Button onClick={handleRetirarClick}>Validar</Button>
+                            </DialogFooter>
+                          </DialogContent>
                         </Dialog>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
                 </TableRow>
-
-                
               ))
             ) : (
               <TableRow key="no-results">
