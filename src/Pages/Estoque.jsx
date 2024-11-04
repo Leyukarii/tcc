@@ -31,7 +31,7 @@ export default function Estoque(){
                         <TabsContent value='buscarReceita'>
                             <h1 className="title2">Buscar Receitas</h1> 
                             <div className="w-3/4">
-                                <FiltroReceitaEstoque/>
+                                
                                 <TableReceitasEstoque/>
 
                             </div>
