@@ -26,7 +26,6 @@ export default function Receitas(){
                         </TabsContent>
                         <TabsContent value='funcionarios'>
                             <h1 className="title2">Cadastros</h1>
-                            <FiltroReceitas/>
                             <TableReceitas />
                         </TabsContent>
                         <TabsContent value='addRemedio'>

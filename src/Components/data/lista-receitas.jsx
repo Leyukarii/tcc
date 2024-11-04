@@ -1,18 +1,18 @@
 import api from "@/axios/config";
 
 // Função para obter a lista básica de receitas
-export async function getReceitas() {
+export async function getReceitas({ data = "", cpf = "" } = {}) {
   try {
-    const response = await api.get('/Prescription'); // Endpoint correto para obter lista básica
-    const { data } = response.data; // Assumindo que os dados estão em response.data.data
+    const response = await api.get('/Prescription', {
+      params: { data, cpf },
+    });
+    const { data: receitasData } = response.data;
 
-    // Formata os dados para corresponder à estrutura esperada
-    const receitas = data.map((item) => ({
+    const receitas = receitasData.map((item) => ({
       id: item.id.toString(),
       name: item.patientName,
       cpf: item.cpf,
       nomeMedico: item.doctorName,
-      // Dados básicos sem CRM, data ou local
     }));
 
     return receitas;

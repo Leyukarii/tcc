@@ -1,11 +1,12 @@
 import api from '@/axios/config'; // Certifique-se de que a configuração do axios está correta
 
-export async function getItensEstoque() {
+export async function getItensEstoque({ name = "" } = {}) {
   try {
-    const response = await api.get('/StockRoom/AvailableMedicaments'); // Substitua pelo endpoint correto
+    const response = await api.get('/StockRoom/AvailableMedicaments', {
+      params: { name },
+    });
     const { data } = response.data; // Assumindo que os dados estão em response.data.data
 
-    console.log(response)
     const cadastros = data.map((item) => ({
       id: item.id,
       name: item.medicamentName,
