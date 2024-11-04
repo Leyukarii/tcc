@@ -7,6 +7,8 @@ import TableCadastros from "@/Components/tables/Table-cadastros/TableCadastros"
 import '../App.css';
 import style from './Navbar.module.css';
 import CadastroPermissao from "@/Components/CadastroPermissao/CadastroPermissao"
+import CadastroPaginaForm from "@/Components/Cadastro Página/CadastroPaginaForm"
+import CadastroCargo from "@/Components/Cadastro Cargo/CadastroCargo"
 
 
 export default function Configuracoes(){
@@ -18,19 +20,18 @@ export default function Configuracoes(){
                         <ModalPages>
                             <TabsList className='ml-6 p-6'>
                                 <TabsTrigger className={style.textoNav} value="permissoes">Permissões</TabsTrigger>
-                                <TabsTrigger className={style.textoNav} value="funcionarios">Funcionarios</TabsTrigger>
-                                <TabsTrigger className={style.textoNav} value="listaPessoas">Lista</TabsTrigger>
+                                <TabsTrigger className={style.textoNav} value="paginas">Páginas</TabsTrigger>
+                                <TabsTrigger className={style.textoNav} value="cargo">Cargos</TabsTrigger>
                             </TabsList>
                         </ModalPages>
                         <TabsContent value='permissoes'>
                             <CadastroPermissao />
                         </TabsContent>
-                        <TabsContent value='funcionarios'>
-                            <CadastroFuncionario/>
+                        <TabsContent value='paginas'>
+                            <CadastroPaginaForm/>
                         </TabsContent>
-                        <TabsContent value='listaPessoas'>
-                            <h1 className="title2">Cadastros</h1>
-                            <TableCadastros/>
+                        <TabsContent value='cargo'>
+                            <CadastroCargo />
                         </TabsContent>
                     </Tabs>
             </div>

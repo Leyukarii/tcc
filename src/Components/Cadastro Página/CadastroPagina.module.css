@@ -1,0 +1,7 @@
+.cadastroPagina{
+    position: relative;
+    display: block;
+    min-height: 100vh;
+    gap: 2rem;
+    overflow: hidden;
+  }
