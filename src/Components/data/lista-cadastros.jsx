@@ -1,9 +1,11 @@
 import api from "@/axios/config"; // Certifique-se de que o caminho está correto
 
 // Função para obter todos os cadastros
-export async function getCadastros() {
+export async function getCadastros({ cpf = "", name = "" } = {}) {
   try {
-    const response = await api.get('/Employee/GetPersons'); // Substitua '/Employee/GetPersons' pelo endpoint correto
+    const response = await api.get('/Employee/GetPersons', {
+      params: { cpf, name },
+    });
     const { data } = response.data;
 
     // Mapeia os dados para a estrutura esperada
@@ -18,7 +20,7 @@ export async function getCadastros() {
     return cadastros;
   } catch (error) {
     console.error("Erro ao buscar cadastros:", error);
-    return []; // Retorna uma lista vazia em caso de erro
+    return [];
   }
 }
 

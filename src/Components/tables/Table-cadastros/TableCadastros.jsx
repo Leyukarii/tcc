@@ -33,10 +33,10 @@ export default function TableCadastros() {
   const [selectedProduct, setSelectedProduct] = useState(null); 
   const rowsPerPage = 6;
 
-  const fetchData = async () => {
+  const fetchData = async (filters = {}) => {
     setIsLoading(true);
     try {
-      const fetchedProducts = await getCadastros();
+      const fetchedProducts = await getCadastros(filters);
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -48,6 +48,11 @@ export default function TableCadastros() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleFilter = (filters) => {
+    fetchData(filters);
+    setCurrentPage(1); // Reset to first page after filtering
+  };
 
   const totalPages = Math.ceil(products.length / rowsPerPage);
 
@@ -93,7 +98,7 @@ export default function TableCadastros() {
   return (
     <div className="p-6 max-w-4xl space-y-4">
       <div className="flex items-center justify-between">
-        <ProdutsFilters />
+        <ProdutsFilters onFilter={handleFilter} />
       </div>
       <div className="border rounded-lg p-4">
         <Table>
