@@ -109,7 +109,7 @@ export default function TableReceitasEstoque() {
                     <TableCell>{product.id}</TableCell>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.cpf}</TableCell>
-                    <TableCell>{product.data || "Data não disponível"}</TableCell>
+                    <TableCell>{product.date || "Data não disponível"}</TableCell>
 
                     {/* DIALOG */}
                     <Dialog onOpenChange={(isOpen) => isOpen && handleDialogOpen(product)}>

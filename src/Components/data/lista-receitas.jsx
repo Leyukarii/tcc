@@ -7,13 +7,23 @@ export async function getReceitas({ data = "", cpf = "" } = {}) {
       params: { data, cpf },
     });
     const { data: receitasData } = response.data;
+    
+    const receitas = receitasData.map((item) => {
+      // Formata a data para o formato DD/MM/YYYY
+      const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
 
-    const receitas = receitasData.map((item) => ({
-      id: item.id.toString(),
-      name: item.patientName,
-      cpf: item.cpf,
-      nomeMedico: item.doctorName,
-    }));
+      return {
+        id: item.id.toString(),
+        name: item.patientName,
+        cpf: item.cpf,
+        nomeMedico: item.doctorName,
+        date: formattedDate // Data formatada
+      };
+    });
 
     return receitas;
   } catch (error) {
