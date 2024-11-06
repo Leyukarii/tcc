@@ -8,7 +8,7 @@ export default function FiltroReceitaEstoque({ onFilter }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onFilter({ cpf }); // Passa o CPF para o componente pai
+    onFilter({ cpf });
   };
 
   return (
