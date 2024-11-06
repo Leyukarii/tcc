@@ -39,3 +39,13 @@ export async function getItensRemediosFormatados() {
     return []; // Retorna uma lista vazia em caso de erro
   }
 }
+
+export async function updateMedicament(id, data) {
+  try {
+    const response = await api.put(`/Medicament/${id}`, data);
+    return response;
+  } catch (error) {
+    console.error("Erro ao atualizar o medicamento:", error);
+    throw error;
+  }
+}

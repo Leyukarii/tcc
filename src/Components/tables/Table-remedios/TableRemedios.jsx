@@ -19,17 +19,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-import { getItensRemedios } from "@/Components/data/lista-remedios";
-import api from "@/axios/config"; // Certifique-se de que está importando a configuração da API corretamente
+import { getItensRemedios, updateMedicament } from "@/Components/data/lista-remedios";
+import api from "@/axios/config";
 import { Edit } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 
 export default function TableRemedios({ refresh }) {
-  const [products, setProducts] = useState([]); // State for fetched products
-  const [isLoading, setIsLoading] = useState(false); // Loading state for feedback
-  const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
-  const [selectedProduct, setSelectedProduct] = useState(null); // Selected product for editing
-  const rowsPerPage = 6; // Number of items per page
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const rowsPerPage = 6;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,36 +46,57 @@ export default function TableRemedios({ refresh }) {
     };
 
     fetchData();
-  }, [refresh]); // Fetch data on component mount and on refresh
+  }, [refresh]);
 
-  const totalPages = Math.ceil(products.length / rowsPerPage); // Calculate total pages
+  const totalPages = Math.ceil(products.length / rowsPerPage);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
   const handleEditClick = (product) => {
-    setSelectedProduct({ ...product }); // Create a copy of the product to edit
+    setSelectedProduct({ ...product });
+    setSuccessMessage(""); // Reset the success message on edit click
   };
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setSelectedProduct((prev) => ({ ...prev, [id]: value })); // Update selected product's specific field
+    setSelectedProduct((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSaveChanges = () => {
-    // Optionally update the products list with the edited product here
-    setSelectedProduct(null); // Close Dialog after saving
+  const handleSaveChanges = async () => {
+    if (!selectedProduct) return;
+
+    try {
+      const response = await updateMedicament(selectedProduct.id, {
+        description: selectedProduct.description,
+        dosage: selectedProduct.dosage,
+        measure: selectedProduct.measure,
+      });
+
+      if (response.status === 200) {
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === selectedProduct.id ? selectedProduct : product
+          )
+        );
+        setSuccessMessage("Cadastro atualizado com sucesso!"); // Display success message
+      } else {
+        console.error("Erro ao atualizar o medicamento:", response);
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar o medicamento:", error);
+    }
   };
 
   const handleDelete = async () => {
     if (selectedProduct) {
       try {
-        await api.delete(`/Medicament/${selectedProduct.id}`); // Ajuste o endpoint conforme necessário
+        await api.delete(`/Medicament/${selectedProduct.id}`);
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product.id !== selectedProduct.id)
         );
-        setSelectedProduct(null); // Fechar o diálogo após exclusão
+        setSelectedProduct(null); // Close the dialog after deletion
       } catch (error) {
         console.error("Erro ao deletar o produto:", error);
       }
@@ -83,7 +105,7 @@ export default function TableRemedios({ refresh }) {
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const paginatedProducts = products.slice(startIndex, endIndex); // Slice products for current page
+  const paginatedProducts = products.slice(startIndex, endIndex);
 
   return (
     <div className="p-6 max-w-4xl space-y-4">
@@ -126,33 +148,33 @@ export default function TableRemedios({ refresh }) {
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="name" className="text-right">
+                          <Label htmlFor="description" className="text-right">
                             Nome
                           </Label>
                           <Input
-                            id="name"
+                            id="description"
                             value={selectedProduct?.description || ''}
                             onChange={handleInputChange}
                             className="col-span-3"
                           />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="dosagem" className="text-right">
+                          <Label htmlFor="dosage" className="text-right">
                             Dosagem
                           </Label>
                           <Input
-                            id="dosagem"
+                            id="dosage"
                             value={selectedProduct?.dosage || ''}
                             onChange={handleInputChange}
                             className="col-span-3"
                           />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="uniMedida" className="text-right">
+                          <Label htmlFor="measure" className="text-right">
                             Uni. Medida
                           </Label>
                           <Input
-                            id="uniMedida"
+                            id="measure"
                             value={selectedProduct?.measure || ''}
                             onChange={handleInputChange}
                             className="col-span-3"
@@ -160,6 +182,11 @@ export default function TableRemedios({ refresh }) {
                         </div>
                       </div>
                       <DialogFooter>
+                        {successMessage && (
+                          <p className="text-green-500 text-center col-span-4">
+                            {successMessage}
+                          </p>
+                        )}
                         <Button type="button" variant="destructive" onClick={handleDelete}>
                           Delete
                         </Button>
