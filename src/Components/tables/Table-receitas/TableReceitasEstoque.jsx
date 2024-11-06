@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
-import { getItensReceitaById, getReceitas } from "@/Components/data/lista-receitas";
+import { getItensReceitaById, getReceitas, withdrawPrescription } from "@/Components/data/lista-receitas";
 import { Edit } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import FiltroReceitaEstoque from "./FiltroReceitaEstoque";
@@ -32,6 +32,7 @@ export default function TableReceitasEstoque() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [incorrectItems, setIncorrectItems] = useState([]); // Novo estado para itens incorretos
   const rowsPerPage = 6;
 
   const fetchData = async (filters = {}) => {
@@ -71,13 +72,25 @@ export default function TableReceitasEstoque() {
     setCurrentPage(1); // Reset to the first page after filtering
   };
 
-  const simulateApiResponse = () => {
-    return Math.random() > 0.5 ? "Success" : "Error";
-  };
+  const handleRetirarClick = async () => {
+    if (!selectedProduct) return;
 
-  const handleRetirarClick = () => {
-    const response = simulateApiResponse();
-    setFeedback(response === "Success" ? "Itens validados com sucesso, retirada concluída!" : "Erro na validação.");
+    try {
+      const stockRoomId = 1; // Defina o ID da sala de estoque conforme necessário
+      const prescriptionId = selectedProduct.id; // ID da prescrição selecionada
+      const takeOutResponsibleId = 2; // Defina o ID do responsável pela retirada
+
+      await withdrawPrescription({ stockRoomId, prescriptionId, takeOutResponsibleId });
+      setFeedback("Itens validados com sucesso, retirada concluída!");
+      setIncorrectItems([]); // Limpa os itens incorretos em caso de sucesso
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        setFeedback("Erro na validação: Os medicamentos retirados não estão de acordo com a receita.");
+        setIncorrectItems(error.response.data.data); // Armazena os itens incorretos
+      } else {
+        setFeedback("Erro inesperado na validação.");
+      }
+    }
   };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -169,6 +182,32 @@ export default function TableReceitasEstoque() {
                                   </Table>
                                 </div>
                               </div>
+                              {/* TABELA DE ITENS INCORRETOS, SE HOUVER */}
+                              {incorrectItems.length > 0 && (
+                                <div className="mt-4">
+                                  <h3 className="text-lg font-medium text-red-500">Itens Retirados Incorretamente</h3>
+                                  <Table>
+                                    <TableHeader>
+                                      <TableHead>ID</TableHead>
+                                      <TableHead>Nome</TableHead>
+                                      <TableHead>Dosagem</TableHead>
+                                      <TableHead>Unidade</TableHead>
+                                      <TableHead>Mensagem</TableHead>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {incorrectItems.map((item) => (
+                                        <TableRow key={item.id}>
+                                          <TableCell>{item.id}</TableCell>
+                                          <TableCell>{item.name}</TableCell>
+                                          <TableCell>{item.dosage}</TableCell>
+                                          <TableCell>{item.measure}</TableCell>
+                                          <TableCell>{item.message}</TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </div>
+                              )}
                             </div>
                             <DialogFooter>
                               <DialogClose>

@@ -69,3 +69,18 @@ export async function getItensReceitaById(id) {
     return null; // Retorna null em caso de erro
   }
 }
+
+export async function withdrawPrescription({ stockRoomId, prescriptionId, takeOutResponsibleId }) {
+  try {
+    const response = await api.post('/Prescription/Withdraw', {
+      stockRoomId,
+      prescriptionId,
+      takeOutResponsibleId
+    });
+    console.log(response)
+    return response.data; // Retorna os dados da resposta, se necessário
+  } catch (error) {
+    console.error("Erro ao realizar a retirada:", error);
+    throw error; // Lança o erro para ser tratado na chamada
+  }
+}
