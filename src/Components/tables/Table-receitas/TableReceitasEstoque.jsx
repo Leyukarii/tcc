@@ -58,6 +58,8 @@ export default function TableReceitasEstoque() {
   };
 
   const handleDialogOpen = async (product) => {
+    setIncorrectItems([])
+    setFeedback()
     try {
       const receitaDetalhada = await getItensReceitaById(product.id);
       setSelectedProduct(receitaDetalhada);
