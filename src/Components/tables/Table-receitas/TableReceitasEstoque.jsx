@@ -38,7 +38,7 @@ export default function TableReceitasEstoque() {
   const fetchData = async (filters = {}) => {
     setIsLoading(true);
     try {
-      const fetchedProducts = await getReceitas(filters);
+      const fetchedProducts = await getReceitas({ ...filters, filterPendent: true });
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -85,6 +85,9 @@ export default function TableReceitasEstoque() {
       await withdrawPrescription({ stockRoomId, prescriptionId, takeOutResponsibleId });
       setFeedback("Itens validados com sucesso, retirada concluída!");
       setIncorrectItems([]); // Limpa os itens incorretos em caso de sucesso
+      setTimeout(() =>{
+        fetchData();
+      },2000)
     } catch (error) {
       if (error.response && error.response.status === 403) {
         setFeedback("Erro na validação: Os medicamentos retirados não estão de acordo com a receita.");
@@ -110,6 +113,7 @@ export default function TableReceitasEstoque() {
               <TableHead>Nome</TableHead>
               <TableHead>CPF</TableHead>
               <TableHead>Data Emissão</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Visualizar</TableHead>
             </TableHeader>
 
@@ -125,6 +129,7 @@ export default function TableReceitasEstoque() {
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.cpf}</TableCell>
                     <TableCell>{product.date || "Data não disponível"}</TableCell>
+                    <TableCell>{product.status}</TableCell>
 
                     {/* DIALOG */}
                     <Dialog onOpenChange={(isOpen) => isOpen && handleDialogOpen(product)}>
@@ -216,9 +221,13 @@ export default function TableReceitasEstoque() {
                                 <Button variant="outline">Fechar</Button>
                               </DialogClose>
                               <Dialog>
-                                <DialogTrigger>
-                                  <Button>Retirar receita</Button>
-                                </DialogTrigger>
+
+                                {product.status != "Concluído" && (
+                                  <DialogTrigger>
+                                    <Button>Retirar receita</Button>
+                                  </DialogTrigger>
+
+                                )}
                                 <DialogContent>
                                   <DialogHeader>
                                     <DialogTitle>Deseja fazer a retirada?</DialogTitle>

@@ -1,10 +1,10 @@
 import api from "@/axios/config";
 
 // Função para obter a lista básica de receitas
-export async function getReceitas({ data = "", cpf = "" } = {}) {
+export async function getReceitas({ data = "", cpf = "", filterPendent = false } = {}) {
   try {
     const response = await api.get('/Prescription', {
-      params: { data, cpf },
+      params: { data, cpf, filterPendent },
     });
     const { data: receitasData } = response.data;
     
@@ -21,7 +21,8 @@ export async function getReceitas({ data = "", cpf = "" } = {}) {
         name: item.patientName,
         cpf: item.cpf,
         nomeMedico: item.doctorName,
-        date: formattedDate // Data formatada
+        date: formattedDate, // Data formatada
+        status: item.status
       };
     });
 
