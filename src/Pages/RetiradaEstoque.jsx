@@ -1,6 +1,6 @@
 import SidebarMenu from "@/Components/Sidebar";
 import { useLocation } from "react-router-dom";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Components/ui/table";
 import { Button } from "@/Components/ui/button";
 import {
     AlertDialog,
