@@ -1,19 +1,30 @@
 import api from "@/axios/config";
 
 // Função para obter a lista básica de receitas
-export async function getReceitas() {
+export async function getReceitas({ data = "", cpf = "", filterPendent = false } = {}) {
   try {
-    const response = await api.get('/Prescription'); // Endpoint correto para obter lista básica
-    const { data } = response.data; // Assumindo que os dados estão em response.data.data
+    const response = await api.get('/Prescription', {
+      params: { data, cpf, filterPendent },
+    });
+    const { data: receitasData } = response.data;
+    
+    const receitas = receitasData.map((item) => {
+      // Formata a data para o formato DD/MM/YYYY
+      const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
 
-    // Formata os dados para corresponder à estrutura esperada
-    const receitas = data.map((item) => ({
-      id: item.id.toString(),
-      name: item.patientName,
-      cpf: item.cpf,
-      nomeMedico: item.doctorName,
-      // Dados básicos sem CRM, data ou local
-    }));
+      return {
+        id: item.id.toString(),
+        name: item.patientName,
+        cpf: item.cpf,
+        nomeMedico: item.doctorName,
+        date: formattedDate, // Data formatada
+        status: item.status
+      };
+    });
 
     return receitas;
   } catch (error) {
@@ -57,5 +68,20 @@ export async function getItensReceitaById(id) {
   } catch (error) {
     console.error("Erro ao buscar itens da receita:", error);
     return null; // Retorna null em caso de erro
+  }
+}
+
+export async function withdrawPrescription({ stockRoomId, prescriptionId, takeOutResponsibleId }) {
+  try {
+    const response = await api.post('/Prescription/Withdraw', {
+      stockRoomId,
+      prescriptionId,
+      takeOutResponsibleId
+    });
+    console.log(response)
+    return response.data; // Retorna os dados da resposta, se necessário
+  } catch (error) {
+    console.error("Erro ao realizar a retirada:", error);
+    throw error; // Lança o erro para ser tratado na chamada
   }
 }

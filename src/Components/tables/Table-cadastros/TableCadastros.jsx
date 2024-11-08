@@ -25,18 +25,21 @@ import ProdutsFilters from "./FiltrosCadastros";
 import { useState, useEffect } from "react";
 import { getCadastros,getCadastroById, deleteCadastro  } from "@/Components/data/lista-cadastros";
 import { Edit } from "lucide-react";
+import { updateCadastro } from "@/Components/data/patient";
 
 export default function TableCadastros() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null); 
+  const [feedback, setFeedback] = useState(null);
+
   const rowsPerPage = 6;
 
-  const fetchData = async () => {
+  const fetchData = async (filters = {}) => {
     setIsLoading(true);
     try {
-      const fetchedProducts = await getCadastros();
+      const fetchedProducts = await getCadastros(filters);
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -49,6 +52,11 @@ export default function TableCadastros() {
     fetchData();
   }, []);
 
+  const handleFilter = (filters) => {
+    fetchData(filters);
+    setCurrentPage(1); // Reset to first page after filtering
+  };
+
   const totalPages = Math.ceil(products.length / rowsPerPage);
 
   const handlePageChange = (newPage) => {
@@ -56,6 +64,7 @@ export default function TableCadastros() {
   };
 
   const handleEditClick = async (product) => {
+    setFeedback('')
     try {
       const detailedProduct = await getCadastroById(product.cpf,product.role);
       setSelectedProduct(detailedProduct);
@@ -82,9 +91,29 @@ export default function TableCadastros() {
     setSelectedProduct((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSaveChanges = () => {
-    setSelectedProduct(null);
+  const handleSaveChanges = async () => {
+    if (!selectedProduct) return;
+  
+    const dataToUpdate = {
+      name: selectedProduct.name,
+      cpf: selectedProduct.cpf,
+      birthDay: selectedProduct.dataNascimento,
+      phoneNumber: selectedProduct.telefone,
+      mail: selectedProduct.email,
+      observations: selectedProduct.obs,
+    };
+  
+    const result = await updateCadastro(dataToUpdate);
+    if (result.success) {
+      setFeedback("Cadastro atualizado com sucesso!");
+      await fetchData(); // Recarrega os dados após a atualização
+      setSelectedProduct(null); // Fecha o Dialog após salvar e recarregar os dados
+    } else {
+      console.error(result.message);
+      setFeedback("Erro ao atualizar o cadastro.");
+    }
   };
+  
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -93,7 +122,7 @@ export default function TableCadastros() {
   return (
     <div className="p-6 max-w-4xl space-y-4">
       <div className="flex items-center justify-between">
-        <ProdutsFilters />
+        <ProdutsFilters onFilter={handleFilter} />
       </div>
       <div className="border rounded-lg p-4">
         <Table>
@@ -171,11 +200,17 @@ export default function TableCadastros() {
                               </div>
                             ) : (
                               <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="emailResponsavel" className="text-right">Observação</Label>
-                                <Input id="Observação" value={selectedProduct.obs || ''} 
-                                onChange={handleInputChange} className="col-span-3" />
-                              </div>)
-                            }
+                                <Label htmlFor="obs" className="text-right">Observação</Label>
+                                <Input 
+                                  id="obs"
+                                  value={selectedProduct.obs || ''} 
+                                  onChange={handleInputChange} 
+                                  className="col-span-3" 
+                                />
+                              </div>
+                            )}
+
+                            {feedback && <p className="text-center my-4 text-red-500">{feedback}</p>}
                           </div>
                         )}
                         <DialogFooter>
