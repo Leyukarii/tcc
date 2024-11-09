@@ -17,7 +17,8 @@ const CadastroCargoForm = () => {
         try{
             const response = await createRole({
                 name,
-                description
+                description,
+                permissionIds: [1]
             });
             if (response && response.status === 200){
                 setFormSuccess('Cargo cadastrado com sucesso!');
