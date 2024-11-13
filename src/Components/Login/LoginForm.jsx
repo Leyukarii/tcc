@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Input from '../Forms/Input';
 import Button from '../Forms/Button';
-import useForm from '../../Hooks/useForm';
 import styles from './LoginForm.module.css';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { login } from '../data/login';
-
+import { login as loginApi } from '../data/login';
+import { AuthContext } from '../../context/AuthContext';
 
 const LoginForm = () => {
   const [mail, setMail] = useState('');
@@ -14,27 +12,38 @@ const LoginForm = () => {
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext); // Usa o contexto para definir o login
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try{
-      const response = await login({
+    try {
+      const response = await loginApi({
         mail,
         password
       });
 
-      if(response && response.status === 200){
+      if (response && response.status === 200) {
         setFormSuccess('Sucesso');
         setFormError('');
-        setMail('');
-        setPassword('');
-        navigate('/home');
-      }else{
+
+        // Extrai os dados relevantes da resposta
+        const { role } = response.data.data;
+        const userData = {
+          email: mail,
+          role: role.name, // Armazena o nome do cargo, como "Admin" ou "User"
+          pages: role.permissions[0]?.pages || [] // Armazena as páginas permitidas
+        };
+        console.log(userData)
+
+        // Armazena o cargo e as páginas no contexto
+        login(userData);
+        navigate('/home'); // Redireciona para a página Home
+      } else {
         setFormError('Acesso negado');
         setFormSuccess('');
       }
-    }catch (error){
+    } catch (error) {
       console.error('Erro ao conectar ao servidor', error);
       setFormError('Acesso negado');
       setFormSuccess(''); 
@@ -49,7 +58,7 @@ const LoginForm = () => {
           label="E-mail"
           type="text"
           value={mail}
-          onChange={(e) => setMail(e.target.value)}/>
+          onChange={(e) => setMail(e.target.value)} />
         <Input
           label="Senha"
           type="password"
