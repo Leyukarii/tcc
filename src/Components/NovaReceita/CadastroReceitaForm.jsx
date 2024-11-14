@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import InputLe from '../Forms/Input';
-import useForm from '../../Hooks/useForm';
 import styles from './CadastroReceitaForm.module.css';
 import { Button } from '../ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -20,64 +19,127 @@ import {
   CommandList,
 } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import axios from 'axios';
+import { createPrescription } from '../data/nova_receita';
+import { carregarMedicamentos } from '../data/carregar-medicamentos';
+import { buscarPacientePorCpf } from '../data/buscar-paciente-por-cpf';
+import { buscarMedicoPorCrm } from '../data/buscar-medico-por-crm';
 
 const CadastroReceitaForm = () => {
-  const nomePacienteR = useForm();
-  const cpfR = useForm();
-  const telefoneR = useForm();
-  const nomeMedico = useForm();
-  const local = useForm();
-  const assinatura = useForm();
-  const dataPrescricao = useForm();
+  const [nomePaciente, setNomePaciente] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [nomeMedico, setNomeMedico] = useState('');
+  const [crm, setCrm] = useState('');
+  const [local, setLocal] = useState('');
+  const [assinatura, setAssinatura] = useState('');
 
-  const [itensReceita, setItensReceita] = useState([]); // Estado para armazenar os itens da receita
-  const [novoItem, setNovoItem] = useState({ qtd: '', descricao: '' }); // Estado para novo item no Dialog
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // Controle para o Dialog
-
-  // Lista de remédios para o ComboBox
-  const statuses = [
-    { value: "remedio1", label: "Remédio 01" },
-    { value: "remedio2", label: "Remédio 02" },
-    { value: "remedio3", label: "Remédio 03" },
-    { value: "remedio4", label: "Remédio 04" },
-    { value: "remedio5", label: "Remédio 05" },
-    { value: "remedio6", label: "Remédio 06" },
-    { value: "remedio7", label: "Remédio 07" },
-  ];
-
+  const [itensReceita, setItensReceita] = useState([]);
+  const [novoItem, setNovoItem] = useState({ qtd: '', descricao: '' });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [medicamentos, setMedicamentos] = useState([]); // Defina o valor inicial como array vazio
+  const [selectedMedicament, setSelectedMedicament] = useState(null);
 
-  // Função para adicionar um novo item ao estado itensReceita
-  const adicionarItem = (event) => {
-    event.preventDefault(); // Impede o comportamento padrão do submit
-    if (selectedStatus && novoItem.qtd && novoItem.descricao) {
-      const itemParaAdicionar = { ...novoItem, name: selectedStatus.label };
-      setItensReceita([...itensReceita, itemParaAdicionar]); // Adiciona novo item à lista
-      setNovoItem({ qtd: '', descricao: '' }); // Limpa o estado para novo item
-      setSelectedStatus(null);
-      setIsDialogOpen(false); // Fecha o Dialog após adicionar
+  useEffect(() => {
+    async function fetchMedicamentos() {
+      try {
+        const response = await carregarMedicamentos();
+        setMedicamentos(response);
+        console.log("Medicamentos carregados no estado:", response); 
+      } catch (error) {
+        console.error("Erro ao carregar medicamentos:", error);
+      }
+    }
+    fetchMedicamentos();
+  }, []);
+
+  useEffect(() => {
+    async function fetchPaciente() {
+      if (cpf.length === 11) { // Confere se o CPF tem 11 dígitos
+        console.log("Buscando paciente com CPF:", cpf); // Log para verificação
+        const paciente = await buscarPacientePorCpf(cpf);
+        if (paciente) {
+          setNomePaciente(paciente.name);
+          console.log("Paciente encontrado:", paciente); // Log para verificação
+        } else {
+          console.log("Paciente não encontrado.");
+          setNomePaciente('');
+        }
+      }
+    }
+    fetchPaciente();
+  }, [cpf]);
+
+  useEffect(() => {
+    async function fetchMedico() {
+      if (crm) { // Executa quando há valor em crm
+        console.log("Buscando médico com CRM:", crm);
+        const medico = await buscarMedicoPorCrm(crm);
+        if (medico) {
+          setNomeMedico(medico.name); // Substitua `name` pela propriedade correta
+          console.log("Médico encontrado:", medico);
+        } else {
+          console.log("Médico não encontrado.");
+          setNomeMedico('');
+        }
+      }
+    }
+    fetchMedico();
+  }, [crm]); // Reexecuta quando o CRM é alterado
+
+  const adicionarItem = () => {
+    if (selectedMedicament && novoItem.qtd && novoItem.descricao) {
+      const itemParaAdicionar = {
+        ...novoItem,
+        name: selectedMedicament.label,
+        medicamentId: selectedMedicament.value,
+      };
+      setItensReceita([...itensReceita, itemParaAdicionar]);
+      setNovoItem({ qtd: '', descricao: '' });
+      setSelectedMedicament(null);
+      setIsDialogOpen(false);
     } else {
       console.log('Preencha todos os campos antes de salvar');
     }
   };
 
-  const StatusList = ({ setOpen, setSelectedStatus }) => (
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const prescriptionData = {
+      cpf,
+      local,
+      items: itensReceita.map(item => ({
+        medicamentId: item.medicamentId,
+        prescribedQuantity: item.qtd,
+        observation: item.descricao,
+      })),
+    };
+
+    try {
+      await createPrescription(prescriptionData);
+      console.log("Receita cadastrada com sucesso");
+      setItensReceita([]);
+    } catch (error) {
+      console.error("Erro ao cadastrar receita:", error);
+    }
+  };
+
+  const StatusList = ({ setOpen, setSelectedMedicament }) => (
     <Command>
       <CommandInput placeholder="Filtrar remédios..." />
       <CommandList>
         <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
         <CommandGroup>
-          {statuses.map((status) => (
+          {medicamentos.map((medicament) => (
             <CommandItem
-              key={status.label}
-              value={status.label}
-              onSelect={(label) => {
-                setSelectedStatus(statuses.find((item) => item.label === label) || null);
+              key={medicament.id}
+              value={medicament.description}
+              onSelect={() => {
+                setSelectedMedicament({ label:medicament.description, value: medicament.id });
                 setOpen(false);
               }}
             >
-              {status.label}
+              {medicament.description}
             </CommandItem>
           ))}
         </CommandGroup>
@@ -90,22 +152,31 @@ const CadastroReceitaForm = () => {
       <div className={styles.containerTituloRe}>
         <h1 className="title2">Nova Receita</h1>
       </div>
-      <form className={styles.formContainerRe}>
+      <form className={styles.formContainerRe} onSubmit={handleSubmit}>
         <div className={styles.formrowRe}>
-          <Input2 label="Nome do Paciente" type="text" name="nomePacienteR" {...nomePacienteR} />
-          <InputLe label="CPF do Paciente" type="number" name="cpfR" {...cpfR} />
-          <InputLe label="Telefone do Paciente" type="number" name="telefoneR" {...telefoneR} />
+          <Input2 label="Nome do Paciente"
+          type="text"
+          value={nomePaciente} readOnly />
+          <InputLe label="CPF do Paciente"
+          type="number"
+          value={cpf}
+          onChange={(e) => setCpf(e.target.value)} />
         </div>
         <div className={styles.formrowRe}>
-          <Input2 label="Nome do Médico" type="text" name="nomeMedico" {...nomeMedico} />
-          <Input4 label="CRM do Médico" type="number" name="crm" />
+          <Input2 label="Nome do Médico"
+          type="text"
+          value={nomeMedico} readOnly />
+          <Input4
+          label="CRM do Médico"
+          type="number" value={crm}
+          onChange={(e) => setCrm(e.target.value)} />
         </div>
 
-        <div className='mb-5'>
+        <div className="mb-5">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
-                <PlusCircle className='w-4 h-4 mr-2' />
+              <Button variant="outline">
+                <PlusCircle className="w-4 h-4 mr-2" />
                 Novo Item
               </Button>
             </DialogTrigger>
@@ -116,41 +187,25 @@ const CadastroReceitaForm = () => {
                 <DialogDescription>Escolha um remédio para adicionar à receita</DialogDescription>
               </DialogHeader>
               
-              {/* COMBOBOX */}
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-[200px] justify-start">
-                    {selectedStatus ? <>{selectedStatus.label}</> : <>Selecione o Remédio</>}
+                    {selectedMedicament ? selectedMedicament.label : "Selecione o Remédio"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0" align="start">
-                  <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
+                  <StatusList setOpen={setOpen} setSelectedMedicament={setSelectedMedicament} />
                 </PopoverContent>
               </Popover>
 
-              <div className='flex gap-5'>
+              <div className="flex gap-5">
                 <div>
                   <Label htmlFor="qtd">Quantidade</Label>
-                  <Input
-                    id='qtd'
-                    type='number'
-                    min="1"
-                    className="w-[100px]"
-                    value={novoItem.qtd}
-                    onChange={(e) => {
-                      const intValue = parseInt(e.target.value, 10); // Converte o valor para int
-                      setNovoItem({ ...novoItem, qtd: intValue > 0 ? intValue : '' }); // Apenas atualiza se for > 0
-                    }}
-                  />
+                  <Input id="qtd" type="number" min="1" className="w-[100px]" value={novoItem.qtd} onChange={(e) => setNovoItem({ ...novoItem, qtd: e.target.value })} />
                 </div>
                 <div>
                   <Label htmlFor="descricao">Descrição</Label>
-                  <Input
-                    id='descricao'
-                    className="w-[350px]"
-                    value={novoItem.descricao}
-                    onChange={(e) => setNovoItem({ ...novoItem, descricao: e.target.value })}
-                  />
+                  <Input id="descricao" className="w-[350px]" value={novoItem.descricao} onChange={(e) => setNovoItem({ ...novoItem, descricao: e.target.value })} />
                 </div>
               </div>
 
@@ -158,7 +213,7 @@ const CadastroReceitaForm = () => {
                 <DialogClose asChild>
                   <Button type="button" variant="outline">Cancelar</Button>
                 </DialogClose>
-                <Button type="submit" onClick={adicionarItem}>Salvar</Button>
+                <Button type="button" onClick={adicionarItem}>Salvar</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -169,11 +224,11 @@ const CadastroReceitaForm = () => {
         </div>
 
         <div className={styles.formrowRe}>
-          <Input2 label="Local" type="text" name="local" {...local} />
-          <Input4 label="Assinatura" type="text" name="assinatura" {...assinatura} />
+          <Input2 label="Local" type="text" value={local} onChange={(e) => setLocal(e.target.value)} />
+          <Input4 label="Assinatura" type="text" value={assinatura} onChange={(e) => setAssinatura(e.target.value)} />
         </div>
         
-        <Button1>Cadastrar nova Receita</Button1>
+        <Button1 type="submit">Cadastrar nova Receita</Button1>
       </form>
     </section>
   );

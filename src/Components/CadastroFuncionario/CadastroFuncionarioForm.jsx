@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import Input from '../Forms/Input';
-import Button from '../Forms/Button';
-import useForm from '../../Hooks/useForm';
 import styles from './CadastroFuncionarioForm.module.css';
-import Input2 from '../Forms/Input2';
-import Input4 from '../Forms/Input4';
 import Button1 from '../Forms/Button1';
 import Input3 from '../Forms/Input3';
 import InputTw from '../Forms/InputTw';
 import ValidaCPF from '../validaCPF';
 import { createEmployee } from '../data/employee';
-import { getRoles } from '../data/lista-roles';
+import { getRoles } from '../data/lista-roles'; 
 import api from '@/axios/config'; 
 
 const CadastroFuncionarioForm = () => {
     const [name, setName] = useState('');
-    const [cpf, setCpf] = useState('');
+    const [cpf, setCpf] = useState(''); 
     const [birthDate, setBirthDate] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
@@ -31,13 +26,12 @@ const CadastroFuncionarioForm = () => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response = await api.get('/Role');
-                setRoles(response.data.data); 
+                const rolesData = await getRoles(); 
+                setRoles(rolesData);
             } catch (error) {
                 console.error('Erro ao buscar funções:', error);
             }
         };
-    
         fetchRoles();
     }, []);
  
@@ -83,7 +77,7 @@ const CadastroFuncionarioForm = () => {
             birthDate: new Date(birthDate).toISOString(), // Converte para o formato ISO
             phone,
             email,
-            crm: select === '1' ? crm.value : null,
+            crm: select === '3' ? crm.value : null,
             responsibleMail,
             tagCode,
             roleId: select
@@ -193,8 +187,8 @@ return (
                 onChange={(e) => setSelect(e.target.value)}>
                 <option disabled value="">Selecione</option>
                 {roles.map((role) => (
-                    <option key={role.key} value={role.key}>
-                        {role.value}
+                    <option key={role.id} value={role.id}>
+                        {role.name}
                     </option>
                 ))}
             </select>
