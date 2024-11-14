@@ -46,12 +46,6 @@ export default function MenuList() {
       label: "Estoque",
       link: "/estoque",
     },
-    "Nova Senha": {
-      key: "nova-senha",
-      icon: <EditOutlined />,
-      label: "Nova Senha",
-      link: "/nova-senha",
-    },
     Configurações: {
       key: "configuracoes",
       icon: <Settings className="w-4" />,
@@ -78,7 +72,10 @@ export default function MenuList() {
           ) : null;
         })}
         
-        {/* Sempre exibe o item de "Sair" */}
+        {/* Sempre exibe o item de "Nova senha" e "Sair" */}
+        <MenuItem key="nova-senha" icon={<EditOutlined className="w-4" />}>
+          <Link to="/nova-senha">Nova Senha</Link>
+        </MenuItem>
         <MenuItem key="sair" icon={<LogOut className="w-4" />}>
           <Link to="/">Sair</Link>
         </MenuItem>
