@@ -77,7 +77,7 @@ const CadastroFuncionarioForm = () => {
             birthDate: new Date(birthDate).toISOString(), // Converte para o formato ISO
             phone,
             email,
-            crm: select === '3' ? crm.value : null,
+            crm,
             responsibleMail,
             tagCode,
             roleId: select
