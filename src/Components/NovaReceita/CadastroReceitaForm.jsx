@@ -31,7 +31,6 @@ const CadastroReceitaForm = () => {
   const [nomeMedico, setNomeMedico] = useState('');
   const [crm, setCrm] = useState('');
   const [local, setLocal] = useState('');
-  const [assinatura, setAssinatura] = useState('');
 
   const [itensReceita, setItensReceita] = useState([]);
   const [novoItem, setNovoItem] = useState({ qtd: '', descricao: '' });
@@ -106,6 +105,7 @@ const CadastroReceitaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const prescriptionData = {
+      employeeId: 0,
       cpf,
       local,
       items: itensReceita.map(item => ({
@@ -135,11 +135,11 @@ const CadastroReceitaForm = () => {
               key={medicament.id}
               value={medicament.description}
               onSelect={() => {
-                setSelectedMedicament({ label:medicament.description, value: medicament.id });
+                setSelectedMedicament({ label: `${medicament.description} ${medicament.dosage}${medicament.measure}`, value: medicament.id });
                 setOpen(false);
               }}
             >
-              {medicament.description}
+               {`${medicament.description} ${medicament.dosage}${medicament.measure}`}
             </CommandItem>
           ))}
         </CommandGroup>
@@ -225,7 +225,7 @@ const CadastroReceitaForm = () => {
 
         <div className={styles.formrowRe}>
           <Input2 label="Local" type="text" value={local} onChange={(e) => setLocal(e.target.value)} />
-          <Input4 label="Assinatura" type="text" value={assinatura} onChange={(e) => setAssinatura(e.target.value)} />
+
         </div>
         
         <Button1 type="submit">Cadastrar nova Receita</Button1>
