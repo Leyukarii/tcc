@@ -12,6 +12,7 @@
   background: #F1F5F9;
   transition: 0.2s;
   flex: 1;
+  max-width: 300px;
 }
 
 .input:focus,

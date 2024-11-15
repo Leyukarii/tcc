@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import InputLe from '../Forms/Input';
 import styles from './CadastroReceitaForm.module.css';
 import { Button } from '../ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -31,13 +30,16 @@ const CadastroReceitaForm = () => {
   const [nomeMedico, setNomeMedico] = useState('');
   const [crm, setCrm] = useState('');
   const [local, setLocal] = useState('');
+  const [employeeId, setEmployeeId] = useState('');
 
   const [itensReceita, setItensReceita] = useState([]);
   const [novoItem, setNovoItem] = useState({ qtd: '', descricao: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [medicamentos, setMedicamentos] = useState([]); // Defina o valor inicial como array vazio
+  const [medicamentos, setMedicamentos] = useState([]); 
   const [selectedMedicament, setSelectedMedicament] = useState(null);
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState('');
 
   useEffect(() => {
     async function fetchMedicamentos() {
@@ -75,7 +77,8 @@ const CadastroReceitaForm = () => {
         console.log("Buscando médico com CRM:", crm);
         const medico = await buscarMedicoPorCrm(crm);
         if (medico) {
-          setNomeMedico(medico.name); // Substitua `name` pela propriedade correta
+          setNomeMedico(medico.name); 
+          setEmployeeId(medico.id);
           console.log("Médico encontrado:", medico);
         } else {
           console.log("Médico não encontrado.");
@@ -84,7 +87,7 @@ const CadastroReceitaForm = () => {
       }
     }
     fetchMedico();
-  }, [crm]); // Reexecuta quando o CRM é alterado
+  }, [crm]); 
 
   const adicionarItem = () => {
     if (selectedMedicament && novoItem.qtd && novoItem.descricao) {
@@ -105,7 +108,7 @@ const CadastroReceitaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const prescriptionData = {
-      employeeId: 0,
+      employeeId: employeeId,
       cpf,
       local,
       items: itensReceita.map(item => ({
@@ -118,9 +121,22 @@ const CadastroReceitaForm = () => {
     try {
       await createPrescription(prescriptionData);
       console.log("Receita cadastrada com sucesso");
+      setFormSuccess('Receita cadastrada com sucesso!');
+      setFormError('');
+      setNomePaciente('');
+        setCpf('');
+        setNomeMedico('');
+        setCrm('');
+        setLocal('');
+        setItensReceita([]);
+        setEmployeeId('');
+        setSelectedMedicament(null);
+        setNovoItem({ qtd: '', descricao: '' });
       setItensReceita([]);
     } catch (error) {
       console.error("Erro ao cadastrar receita:", error);
+      setFormError('Erro ao cadastrar receita. Por favor, verifique os dados.');
+      setFormSuccess('');
     }
   };
 
@@ -157,7 +173,7 @@ const CadastroReceitaForm = () => {
           <Input2 label="Nome do Paciente"
           type="text"
           value={nomePaciente} readOnly />
-          <InputLe label="CPF do Paciente"
+          <Input2 label="CPF do Paciente"
           type="number"
           value={cpf}
           onChange={(e) => setCpf(e.target.value)} />
@@ -166,7 +182,7 @@ const CadastroReceitaForm = () => {
           <Input2 label="Nome do Médico"
           type="text"
           value={nomeMedico} readOnly />
-          <Input4
+          <Input2
           label="CRM do Médico"
           type="number" value={crm}
           onChange={(e) => setCrm(e.target.value)} />
@@ -229,6 +245,8 @@ const CadastroReceitaForm = () => {
         </div>
         
         <Button1 type="submit">Cadastrar nova Receita</Button1>
+        {formError && <p style={{ color: 'red', textAlign: 'center' }}>{formError}</p>}
+        {formSuccess && <p style={{ color: 'green', textAlign: 'center' }}>{formSuccess}</p>}
       </form>
     </section>
   );
