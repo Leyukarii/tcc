@@ -7,7 +7,7 @@ export async function getCadastros({ cpf = "", name = "" } = {}) {
       params: { cpf, name },
     });
     const { data } = response.data;
-
+    console.log(data)
     // Mapeia os dados para a estrutura esperada
     const cadastros = data.map((item) => ({
       id: item.id,
@@ -15,6 +15,7 @@ export async function getCadastros({ cpf = "", name = "" } = {}) {
       name: item.name,
       cpf: item.cpf,
       role: item.role,
+      roleId:item.roleId
     }));
 
     return cadastros;
@@ -58,6 +59,7 @@ export async function getCadastroById(cpf,role) {
             // Mapeia os dados para o formato completo esperado
             const cadastroDetalhado = {
               id: data.id,
+              roleId:data.roleId,
               uniqueId: data.uniqueId,
               name: data.name,
               cpf: data.cpf,
@@ -67,6 +69,8 @@ export async function getCadastroById(cpf,role) {
               telefone: data.phone,
               CRM: data.crm,
               emailResponsavel: data.responsibleMail,
+              tagCode: data.tagCode,
+              employeeId:data.employeeId
             };
         
             return cadastroDetalhado;

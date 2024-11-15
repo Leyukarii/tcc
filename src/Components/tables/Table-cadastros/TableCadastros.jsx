@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import { getCadastros,getCadastroById, deleteCadastro  } from "@/Components/data/lista-cadastros";
 import { Edit } from "lucide-react";
 import { updateCadastro } from "@/Components/data/patient";
+import { resetEmployeePassword } from "@/Components/data/employee";
 
 export default function TableCadastros() {
   const [products, setProducts] = useState([]);
@@ -84,6 +85,18 @@ export default function TableCadastros() {
       }
     }
   };
+  const resetPassword = async () =>{
+    setFeedback('');
+    try {
+      const response = await resetEmployeePassword(selectedProduct.id);
+      if (response.success) {
+        setFeedback({ message: 'Senha alterada com sucesso!', type: 'success' });
+      }
+    } catch (error) {
+      console.log("Erro ao redefinir a senha", error);
+      setFeedback({ message: 'Erro ao redefinir a senha', type: 'error' });
+    }
+  }
 
 
   const handleInputChange = (e) => {
@@ -101,8 +114,16 @@ export default function TableCadastros() {
       phoneNumber: selectedProduct.telefone,
       mail: selectedProduct.email,
       observations: selectedProduct.obs,
+      role: selectedProduct.role,
+      crm: selectedProduct.CRM,
+      emailResponsavel: selectedProduct.emailResponsavel,
+      id:selectedProduct.id,
+      roleId:selectedProduct.roleId,
+      tagCode:selectedProduct.tagCode,
+      employeeId:selectedProduct.employeeId
     };
-  
+    
+    console.log(selectedProduct)
     const result = await updateCadastro(dataToUpdate);
     if (result.success) {
       setFeedback("Cadastro atualizado com sucesso!");
@@ -110,7 +131,7 @@ export default function TableCadastros() {
       setSelectedProduct(null); // Fecha o Dialog após salvar e recarregar os dados
     } else {
       console.error(result.message);
-      setFeedback("Erro ao atualizar o cadastro.");
+      setFeedback({ message: 'Erro ao atualizar o cadastro.', type: 'error' });
     }
   };
   
@@ -209,11 +230,26 @@ export default function TableCadastros() {
                                 />
                               </div>
                             )}
+                            {selectedProduct.role !== 'patient' && (
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="tagCode" className="text-right">Tag code</Label>
+                                <Input id="tagCode" value={selectedProduct.tagCode || ''} onChange={handleInputChange} className="col-span-3" />
+                            </div>
 
-                            {feedback && <p className="text-center my-4 text-red-500">{feedback}</p>}
+                            )}
+
+                            {feedback && (
+                              <p className={`text-center my-4 ${feedback.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                                {feedback.message}
+                              </p>
+                            )}
+
                           </div>
                         )}
                         <DialogFooter>
+                          {selectedProduct && selectedProduct.role !== 'patient' !== 'patient' &&(
+                            <Button type="button" variant="outline" onClick={resetPassword}>Redefinir senha</Button>
+                          )}
                           <Button type="button" variant="destructive" onClick={handleDelete}>Delete</Button>
                           <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
                         </DialogFooter>

@@ -21,4 +21,13 @@ export async function createEmployee(employeeData) {
   }
 }
 
+export async function resetEmployeePassword(employeeId) {
+  try {
+    const response = await api.get(`/Auth/ResetPassword/${employeeId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao redefinir a senha do funcionário:", error);
+    throw error;
+  }
+}
 
