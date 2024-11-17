@@ -7,6 +7,7 @@ import ValidaCPF from '../validaCPF';
 import { createEmployee } from '../data/employee';
 import { getRoles } from '../data/lista-roles'; 
 import api from '@/axios/config'; 
+import { validaCrm } from '../data/validar-crm';
 
 const CadastroFuncionarioForm = () => {
     const [name, setName] = useState('');
@@ -22,6 +23,7 @@ const CadastroFuncionarioForm = () => {
     const [formError, setFormError] = useState('');
     const [formSuccess, setFormSuccess] = useState('');
     const [roles, setRoles] = useState([]);
+    const [crmError, setCrmError] = useState('');
 
     useEffect(() => {
         const fetchRoles = async () => {
@@ -34,7 +36,28 @@ const CadastroFuncionarioForm = () => {
         };
         fetchRoles();
     }, []);
- 
+
+    const handleCrmChange = async (event) => {
+        const inputCrm = event.target.value;
+        setCrm(inputCrm);
+
+        if (inputCrm.length >= 5){
+            try{
+                const medicoData = await validaCrm(inputCrm);
+
+                if (medicoData && medicoData.registrationStatus === "Regular"){
+                    setName(medicoData.fullName);
+                    setCrmError('');
+                }else{
+                    setCrmError('CRM inválido ou status irregular');
+                }
+            }catch (error) {
+                setCrmError('Erro ao verificar CRM');
+            }
+        }else{
+            setCrmError('');
+        }
+    };
 
   const handleCPFChange = (event) => {
     // Limita os caracteres para 11 dígitos antes de aplicar a máscara
@@ -103,7 +126,7 @@ const CadastroFuncionarioForm = () => {
             console.error('Erro ao conectar ao servidor:', error.response.data);
             setFormError(`Erro: ${error.response.data.message || 'Verifique os dados enviados.'}`);
         }else{
-            setFormError('Erro ao conectar ao servidor');
+            setFormError('');
         }
 
         //console.error('Erro ao conectar ao servidor:', error);
@@ -198,9 +221,10 @@ return (
                     label="CRM"
                     type="text"
                     value={crm}
-                    onChange={(e) => setCrm(e.target.value)}
-                    className="w-full" />
+                    onChange={handleCrmChange}
+                    className="w-full" />       
               )}
+              {crmError && <p style={{ color: 'red' }}>{crmError}</p>}
           </div>
 
           <div className="flex gap-5">

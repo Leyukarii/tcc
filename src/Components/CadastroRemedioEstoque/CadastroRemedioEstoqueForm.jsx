@@ -18,12 +18,31 @@ const CadastroRemedioEstoqueForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const employeeId = localStorage.getItem('employeeId');
+
+        if (!employeeId || employeeId === "null") {
+            setFormError('Erro: ID do funcionário não encontrado.');
+            return;
+        }
+
+        console.log("employeeId:", employeeId);
+
+        console.log({
+            expirationDate,
+            quantity,
+            stockRoomId: selectSala,
+            medicamentId,
+            employeeId
+        });
+
         try {
             const response = await createStockRoomMedicament({
                 expirationDate,
                 quantity,
-                stockRoomIds: [selectSala],
+                stockRoomId: selectSala,
                 medicamentId,
+                employeeId
             });
 
             if (response && response.status === 200) {
@@ -31,7 +50,7 @@ const CadastroRemedioEstoqueForm = () => {
                 setFormError('');
                 setExpirationDate('');
                 setQuantity('');
-                setStockRoomId('');
+                setSelectSala(''); 
                 setMedicamentId('');
             } else {
                 setFormError('Erro ao cadastrar remédio no estoque.');
@@ -93,10 +112,10 @@ const CadastroRemedioEstoqueForm = () => {
                         onChange={handleSelectSalaChange}
                     >
                         <option disabled value="">Selecione</option>
-                            {salas.map((sala) => (
+                        {salas.map((sala) => (
                             <option key={sala.id} value={sala.id}>{sala.name}</option>
-                            ))}
-                        </select>
+                        ))}
+                    </select>
                 </div> 
 
                 <div className={styles.formrowE}>

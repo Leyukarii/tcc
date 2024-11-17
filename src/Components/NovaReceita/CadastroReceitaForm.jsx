@@ -7,7 +7,6 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import TableItensReceita from '../tables/Table-itens-receita/TableItensReceita';
 import Input2 from '../Forms/Input2';
-import Input4 from '../Forms/Input4';
 import Button1 from '../Forms/Button1';
 import {
   Command,
@@ -184,7 +183,7 @@ const CadastroReceitaForm = () => {
           value={nomeMedico} readOnly />
           <Input2
           label="CRM do Médico"
-          type="number" value={crm}
+          type="text" value={crm}
           onChange={(e) => setCrm(e.target.value)} />
         </div>
 

@@ -28,11 +28,14 @@ const LoginForm = () => {
         setFormError('');
 
         // Extrai os dados relevantes da resposta
-        const { role } = response.data.data;
+        const { role, id } = response.data.data;
+        localStorage.setItem('employeeId', id); 
+        console.log("ID do funcionário armazenado:", localStorage.getItem('employeeId'));
         const userData = {
           email: mail,
           role: role.name, // Armazena o nome do cargo, como "Admin" ou "User"
-          pages: role.permissions[0]?.pages || [] // Armazena as páginas permitidas
+          pages: role.permissions[0]?.pages || [], // Armazena as páginas permitidas
+          employeeId: id
         };
         console.log(userData)
 
