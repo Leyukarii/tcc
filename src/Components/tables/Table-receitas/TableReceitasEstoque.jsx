@@ -78,9 +78,15 @@ export default function TableReceitasEstoque() {
     if (!selectedProduct) return;
 
     try {
+      const employeeId = localStorage.getItem('employeeId');
+
+        if (!employeeId || employeeId === "null") {
+            setFormError('Erro: ID do funcionário não encontrado.');
+            return;
+        }
       const stockRoomId = 1; // Defina o ID da sala de estoque conforme necessário
       const prescriptionId = selectedProduct.id; // ID da prescrição selecionada
-      const takeOutResponsibleId = 2; // Defina o ID do responsável pela retirada
+      const takeOutResponsibleId = employeeId; // Defina o ID do responsável pela retirada
 
       await withdrawPrescription({ stockRoomId, prescriptionId, takeOutResponsibleId });
       setFeedback("Itens validados com sucesso, retirada concluída!");
