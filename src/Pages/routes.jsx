@@ -44,10 +44,6 @@ export const router = createBrowserRouter([
         element: <RetiradaEstoque />
     },
     {
-        path: "/exp-imp",
-        element: <ExpImp/>
-    },
-    {
         path: "/configuracoes",
         element: <Configuracoes />
     }
