@@ -12,6 +12,7 @@ import CadastroNovaSenha from "@/Components/CadastroNovaSenha/CadastroNovaSenha"
 import NovaSenha from "./NovaSenha";
 import RetiradaEstoque from "./RetiradaEstoque";
 import CadastroPermissao from "@/Components/CadastroPermissao/CadastroPermissao";
+import ExpImp from "./ExpImp";
 
 export const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
     {
         path: "/retirada",
         element: <RetiradaEstoque />
+    },
+    {
+        path: "/exp-imp",
+        element: <ExpImp/>
     },
     {
         path: "/configuracoes",
