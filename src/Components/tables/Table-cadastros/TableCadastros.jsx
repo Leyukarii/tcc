@@ -27,6 +27,7 @@ import { getCadastros,getCadastroById, deleteCadastro  } from "@/Components/data
 import { Edit } from "lucide-react";
 import { updateCadastro } from "@/Components/data/patient";
 import { resetEmployeePassword } from "@/Components/data/employee";
+import { getRoles } from "@/Components/data/lista-roles";
 
 export default function TableCadastros() {
   const [products, setProducts] = useState([]);
@@ -34,6 +35,7 @@ export default function TableCadastros() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null); 
   const [feedback, setFeedback] = useState(null);
+  const [roles, setRoles] = useState([]); //
 
   const rowsPerPage = 6;
 
@@ -49,8 +51,18 @@ export default function TableCadastros() {
     }
   };
 
+  const fetchRoles = async () => {
+    try {
+      const fetchedRoles = await getRoles(); 
+      setRoles(fetchedRoles);
+    } catch (error) {
+      console.error("Erro ao buscar os cargos:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchRoles();
   }, []);
 
   const handleFilter = (filters) => {
@@ -101,8 +113,20 @@ export default function TableCadastros() {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setSelectedProduct((prev) => ({ ...prev, [id]: value }));
+  
+    // Atualize o roleId com base no nome selecionado
+    if (id === 'role') {
+      const selectedRole = roles.find((role) => role.name === value);
+      setSelectedProduct((prev) => ({
+        ...prev,
+        [id]: value,
+        roleId: selectedRole ? selectedRole.id : null, // Atualize o roleId
+      }));
+    } else {
+      setSelectedProduct((prev) => ({ ...prev, [id]: value }));
+    }
   };
+  
 
   const handleSaveChanges = async () => {
     if (!selectedProduct) return;
@@ -229,6 +253,7 @@ export default function TableCadastros() {
                                   className="col-span-3" 
                                 />
                               </div>
+                              
                             )}
                             {selectedProduct.role !== 'patient' && (
                             <div className="grid grid-cols-4 items-center gap-4">
@@ -237,6 +262,22 @@ export default function TableCadastros() {
                             </div>
 
                             )}
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="role" className="text-right">Cargo</Label>
+                              <select
+                                id="role"
+                                value={selectedProduct.role || ''}
+                                onChange={(e) => handleInputChange(e)}
+                                className="col-span-3 border rounded p-2"
+                              >
+                                <option value="" disabled>Selecione um cargo</option>
+                                {roles.map((role) => (
+                                  <option key={role.id} value={role.name}>
+                                    {role.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
 
                             {feedback && (
                               <p className={`text-center my-4 ${feedback.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>

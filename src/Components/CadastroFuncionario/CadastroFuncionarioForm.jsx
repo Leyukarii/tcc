@@ -123,7 +123,7 @@ const CadastroFuncionarioForm = () => {
         }
     } catch (error) {
         if (error.response){
-            console.error('Erro ao conectar ao servidor:', error.response.data);
+            console.error('Erro ao cadastrar funcionário:', error.response.data);
             setFormError(`Erro: ${error.response.data.message || 'Verifique os dados enviados.'}`);
         }else{
             setFormError('');

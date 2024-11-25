@@ -67,8 +67,8 @@ const CadastroPacienteForm = () => {
                 setFormSuccess('');
             }
         } catch (error) {
-            console.error('Erro ao conectar ao servidor:', error);
-            setFormError('Erro ao conectar ao servidor');
+            console.error('Erro ao cadastrar paciente:', error);
+            setFormError('Erro ao cadastrar paciente');
             setFormSuccess('');
         }
     };

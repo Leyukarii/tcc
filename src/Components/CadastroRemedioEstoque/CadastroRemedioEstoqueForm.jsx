@@ -57,9 +57,25 @@ const CadastroRemedioEstoqueForm = () => {
                 setFormSuccess('');
             }
         } catch (error) {
-            console.error('Erro ao conectar ao servidor', error);
-            setFormError('Erro ao conectar ao servidor');
+            if (error.response){
+                switch (error.response.status) {
+                    case 400:
+                        setFormError('A quantidade de medicamentos indicada não corresponde aos lidos nas prateleiras.');
+                        break;
+                    case 404:
+                        setFormError('Sala de estoque ou medicamento não encontrado.');
+                        break;
+                    case 500:
+                        setFormError('Erro interno ao tentar adicionar o item ao estoque.');
+                        break;
+                    default:
+                        setFormError('Erro desconhecido ao tentar adicionar o item ao estoque.');
+                }
+            }else{
+                setFormError('Erro ao conectar-se ao servidor. Verifique sua conexão.');
+            }
             setFormSuccess('');
+            console.error('Erro ao cadastrar remédio no estoque.', error);
         }
     };
 

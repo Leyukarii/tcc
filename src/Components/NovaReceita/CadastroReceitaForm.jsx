@@ -133,10 +133,26 @@ const CadastroReceitaForm = () => {
         setNovoItem({ qtd: '', descricao: '' });
       setItensReceita([]);
     } catch (error) {
-      console.error("Erro ao cadastrar receita:", error);
-      setFormError('Erro ao cadastrar receita. Por favor, verifique os dados.');
-      setFormSuccess('');
+      if (error.response) {
+        switch (error.response.status) {
+          case 403:
+            setFormError('Funcionário não tem permissão para prescrever (CRM não registrado).');
+            break;
+          case 404:
+            setFormError('Medicamento, funcionário ou paciente não encontrado.');
+            break;
+          case 500:
+            setFormError('Erro interno ao tentar criar a receita.');
+            break;
+            default:
+              setFormError('Erro desconhecido ao cadastrar a receita.');
+      }
+    }else{
+      setFormError('Erro ao conectar-se ao servidor. Tente novamente.');
     }
+    setFormSuccess('');
+    console.error("Erro ao cadastrar receita:", error);
+  }
   };
 
   const StatusList = ({ setOpen, setSelectedMedicament }) => (

@@ -25,6 +25,7 @@ export async function getCadastros({ cpf = "", name = "" } = {}) {
   }
 }
 
+
 // Função para obter os detalhes de um cadastro específico pelo ID
 export async function getCadastroById(cpf,role) {
     if(role === 'patient'){

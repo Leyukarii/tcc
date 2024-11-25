@@ -12,7 +12,7 @@ import CadastroNovaSenha from "@/Components/CadastroNovaSenha/CadastroNovaSenha"
 import NovaSenha from "./NovaSenha";
 import RetiradaEstoque from "./RetiradaEstoque";
 import CadastroPermissao from "@/Components/CadastroPermissao/CadastroPermissao";
-import ExpImp from "./ExpImp";
+
 
 export const router = createBrowserRouter([
     {
