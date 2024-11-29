@@ -71,10 +71,10 @@ const LoginForm = () => {
       </form>
       {formError && <p style={{ color: 'red', textAlign: 'center' }}>{formError}</p>}
       {formSuccess && <p style={{ color: 'green', textAlign: 'center' }}>{formSuccess}</p>}
-      <Link className={styles.perdeu} to="/login/perdeu">Esqueceu a Senha?</Link>
       <div className={styles.cadastro}>
-        <p>Ainda não possui cadastro? Entre em contato com o RH</p>
+        <p>Esqueceu a senha? Entre em contato com o RH</p>
       </div>
+        <p>Ainda não possui cadastro? Entre em contato com o RH</p>
     </section>
   );
 };

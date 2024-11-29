@@ -22,6 +22,7 @@ import { createPrescription } from '../data/nova_receita';
 import { carregarMedicamentos } from '../data/carregar-medicamentos';
 import { buscarPacientePorCpf } from '../data/buscar-paciente-por-cpf';
 import { buscarMedicoPorCrm } from '../data/buscar-medico-por-crm';
+import InputMask from 'react-input-mask';
 
 const CadastroReceitaForm = () => {
   const [nomePaciente, setNomePaciente] = useState('');
@@ -54,21 +55,29 @@ const CadastroReceitaForm = () => {
   }, []);
 
   useEffect(() => {
-    async function fetchPaciente() {
-      if (cpf.length === 11) { // Confere se o CPF tem 11 dígitos
-        console.log("Buscando paciente com CPF:", cpf); // Log para verificação
-        const paciente = await buscarPacientePorCpf(cpf);
-        if (paciente) {
-          setNomePaciente(paciente.name);
-          console.log("Paciente encontrado:", paciente); // Log para verificação
-        } else {
-          console.log("Paciente não encontrado.");
+    const fetchPaciente = async () => {
+      const cpfNumerico = cpf.replace(/\D/g, ''); // Remove pontuação
+      if (cpfNumerico.length === 11) { // Certifique-se de que o CPF tem 11 dígitos
+        try {
+          const paciente = await buscarPacientePorCpf(cpfNumerico);
+          if (paciente) {
+            setNomePaciente(paciente.name);
+          } else {
+            setNomePaciente('');
+            console.log("Paciente não encontrado.");
+          }
+        } catch (error) {
+          console.error("Erro ao buscar paciente:", error);
           setNomePaciente('');
         }
+      } else {
+        setNomePaciente(''); // Reseta o campo se o CPF for apagado
       }
-    }
+    };
+  
     fetchPaciente();
   }, [cpf]);
+  
 
   useEffect(() => {
     async function fetchMedico() {
@@ -188,10 +197,15 @@ const CadastroReceitaForm = () => {
           <Input2 label="Nome do Paciente"
           type="text"
           value={nomePaciente} readOnly />
-          <Input2 label="CPF do Paciente"
-          type="number"
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)} />
+          <Input2
+            label="CPF do Paciente"
+            type="text"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+            as={InputMask}
+            mask="999.999.999-99"
+            placeholder="000.000.000-00"
+          />
         </div>
         <div className={styles.formrowRe}>
           <Input2 label="Nome do Médico"

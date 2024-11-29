@@ -227,26 +227,25 @@ return (
               {crmError && <p style={{ color: 'red' }}>{crmError}</p>}
           </div>
 
+          {select === '2' && ( // Exibe somente se o ID do Estoquista for selecionado
           <div className="flex gap-5">
-              <div className="w-full">
-                  <InputTw
-                    label="E-mail do Responsável"
-                    type="text"
-                    value={responsibleMail}
-                    onChange={(e) => setResponsibleMail(e.target.value)}
-                    className="w-full" />
-              </div>
-              <div className="w-full">
-                  <InputTw
-                    label="Código do Crachá"
-                    type="text"
-                    value={tagCode}
-                    onChange={(e) => setTagCode(e.target.value)}
-                    className="w-full" />
-
-                
-              </div>
+            <InputTw
+              label="E-mail do Responsável"
+              type="text"
+              value={responsibleMail}
+              onChange={(e) => setResponsibleMail(e.target.value)}
+              className="w-full"
+            />
+            <InputTw
+              label="Código do Crachá"
+              type="text"
+              value={tagCode}
+              onChange={(e) => setTagCode(e.target.value)}
+              className="w-full"
+            />
           </div>
+        )}
+         
 
           <Button1 type="submit">Cadastrar Funcionário</Button1>
         {formError && <p style={{ color: 'red', textAlign: 'center' }}>{formError}</p>}

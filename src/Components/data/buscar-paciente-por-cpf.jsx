@@ -1,19 +1,22 @@
-import api from '@/axios/config';
+import api from '@/axios/config'; 
 
 export async function buscarPacientePorCpf(cpf) {
-    try {
-        const response = await api.get(`/patient?cpf=${cpf}`);
-        console.log("Resposta do backend:", response.data); // Log para verificação
+  try {
+    const cpfNumerico = cpf.replace(/\D/g, ''); // Remove pontuação
+    console.log("Buscando paciente com CPF:", cpfNumerico);
 
-        if (response.data && Array.isArray(response.data.data)) {
-            // Filtra pelo CPF exato no frontend, caso o backend retorne múltiplos pacientes
-            const pacienteEncontrado = response.data.data.find(paciente => paciente.cpf === cpf);
-            return pacienteEncontrado || null; // Retorna o paciente encontrado ou null se não houver
-        } else {
-            return null;
-        }
-    } catch (error) {
-        console.error("Erro ao buscar paciente:", error);
-        return null;
+    const response = await api.get(`/patient?cpf=${cpfNumerico}`);
+    console.log("Resposta da API:", response.data);
+
+    if (response.data && Array.isArray(response.data.data)) {
+      const pacienteEncontrado = response.data.data.find(
+        paciente => paciente.cpf.replace(/\D/g, '') === cpfNumerico // Remove pontuação para comparar
+      );
+      return pacienteEncontrado || null;
     }
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar paciente:", error);
+    return null;
+  }
 }
