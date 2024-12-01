@@ -16,7 +16,6 @@ export default function SidebarMenu(){
                     trigger={null}
                     >
 
-                    <LogoSideBar path="src\Assets\redux.png"   />
    
                     <MenuList   />
                 </Sider>

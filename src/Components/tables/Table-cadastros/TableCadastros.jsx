@@ -262,6 +262,7 @@ export default function TableCadastros() {
                             </div>
 
                             )}
+                            {selectedProduct && selectedProduct.role !== 'patient' && (
                             <div className="grid grid-cols-4 items-center gap-4">
                               <Label htmlFor="role" className="text-right">Cargo</Label>
                               <select
@@ -278,6 +279,7 @@ export default function TableCadastros() {
                                 ))}
                               </select>
                             </div>
+                            )}
 
                             {feedback && (
                               <p className={`text-center my-4 ${feedback.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>

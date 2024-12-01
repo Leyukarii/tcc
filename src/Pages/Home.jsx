@@ -14,7 +14,6 @@ const Home = () => {
         <h1 className={styles.titulo}>Seja Bem Vindo ao EFarma</h1>
         <h2 className={styles.h2}>Gestão Inteligente de Medicamentos</h2>
         <p className={styles.h2}>Cargo: {user?.role || "Usuário não logado"}</p> {/* Exibe o cargo do usuário */}
-        <img className={styles.imagem} src={src/Assets/redux.png} alt="Descrição da Imagem"/>
       </div>
     </div>
   );
