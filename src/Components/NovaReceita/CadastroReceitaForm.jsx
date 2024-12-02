@@ -21,6 +21,7 @@ import { createPrescription } from '../data/nova_receita';
 import { carregarMedicamentos } from '../data/carregar-medicamentos';
 import { buscarPacientePorCpf } from '../data/buscar-paciente-por-cpf';
 import { buscarMedicoPorCrm } from '../data/buscar-medico-por-crm';
+import InputMask from 'react-input-mask';
 
 
 const CadastroReceitaForm = () => {

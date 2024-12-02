@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { useState, useEffect } from "react";
 import { Edit } from "lucide-react";
 import { getStockRooms } from "@/Components/data/lista-stockroom"; // Certifique-se do caminho correto
+import { deleteStockRoom } from "@/Components/data/permission";
 
 export default function TableStockRooms() {
   const [stockRooms, setStockRooms] = useState([]);
@@ -46,15 +47,19 @@ export default function TableStockRooms() {
 
   const handleDelete = async () => {
     if (selectedRoom) {
-      const result = await deleteStockRoom(selectedRoom.id); // Função para deletar a sala (a ser implementada)
-      if (result.success) {
-        setSelectedRoom(null); // Limpa a sala selecionada
-        fetchData();
-      } else {
-        console.error(result.message);
-      }
+        try {
+            const result = await deleteStockRoom(selectedRoom.id); // Chama a função para deletar
+            if (result.success) {
+                setSelectedRoom(null); // Limpa a sala selecionada
+                fetchData(); // Atualiza a lista de salas após a exclusão
+            } else {
+                console.error(result.message); // Exibe mensagem de erro da API
+            }
+        } catch (error) {
+            console.error(error.message); // Trata erros da API ou conexão
+        }
     }
-  };
+};
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
