@@ -23,5 +23,5 @@ RUN npm install -g serve
 EXPOSE 3000
 
 # Comando para rodar o servidor com a build
-CMD ["serve", "-s", "build", "-l", "3000", "--single"]
+CMD ["serve", "-s", "dist", "-l", "3000", "--single"]
 
