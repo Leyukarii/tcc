@@ -9,3 +9,14 @@ export async function getPages() {
     return [];
   }
 }
+
+export async function deletePage(id){
+  console.log(id)
+  try {
+      const response = await api.delete(`/Page/${id}`);
+      return response.data;
+  } catch (error) {
+      console.error("Erro ao deletar a sala de estoque", error);
+      throw error.response?.data || { message: "Erro desconhecido ao deletar a sala de estoque" };
+  }
+}

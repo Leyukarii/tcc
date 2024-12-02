@@ -6,7 +6,7 @@ import { Button } from "@/Components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 import { useState, useEffect } from "react";
 import { Edit } from "lucide-react";
-import { getPages } from "@/Components/data/lista-pages";
+import { deletePage, getPages } from "@/Components/data/lista-pages";
 
 export default function TablePages() {
   const [pages, setPages] = useState([]);
@@ -62,19 +62,6 @@ export default function TablePages() {
     setSelectedPage((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSaveChanges = async () => {
-    if (!selectedPage) return;
-
-    const result = await updatePage(selectedPage); // Função para atualizar a página (a ser implementada)
-    if (result.success) {
-      setFeedback("Página atualizada com sucesso!");
-      await fetchData();
-      setSelectedPage(null);
-    } else {
-      console.error(result.message);
-      setFeedback("Erro ao atualizar a página.");
-    }
-  };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -128,7 +115,6 @@ export default function TablePages() {
                         )}
                         <DialogFooter>
                           <Button type="button" variant="destructive" onClick={handleDelete}>Delete</Button>
-                          <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
