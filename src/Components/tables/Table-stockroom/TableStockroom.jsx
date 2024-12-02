@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { useState, useEffect } from "react";
 import { Edit } from "lucide-react";
 import { getStockRooms } from "@/Components/data/lista-stockroom"; // Certifique-se do caminho correto
-import { deleteStockRoom } from "@/Components/data/permission";
+import { deleteStockRoom } from "@/Components/data/stockroom";
 
 export default function TableStockRooms() {
   const [stockRooms, setStockRooms] = useState([]);
@@ -65,20 +65,8 @@ export default function TableStockRooms() {
     const { id, value } = e.target;
     setSelectedRoom((prev) => ({ ...prev, [id]: value }));
   };
+  
 
-  const handleSaveChanges = async () => {
-    if (!selectedRoom) return;
-
-    const result = await updateStockRoom(selectedRoom); // Função para atualizar a sala (a ser implementada)
-    if (result.success) {
-      setFeedback("Sala atualizada com sucesso!");
-      await fetchData();
-      setSelectedRoom(null);
-    } else {
-      console.error(result.message);
-      setFeedback("Erro ao atualizar a sala.");
-    }
-  };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -132,7 +120,7 @@ export default function TableStockRooms() {
                         )}
                         <DialogFooter>
                           <Button type="button" variant="destructive" onClick={handleDelete}>Delete</Button>
-                          <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
+                        
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
