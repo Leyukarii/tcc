@@ -61,19 +61,19 @@ export default function TablePermissions() {
     setSelectedPermission((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSaveChanges = async () => {
-    if (!selectedPermission) return;
+  // const handleSaveChanges = async () => {
+  //   if (!selectedPermission) return;
 
-    const result = await updatePermission(selectedPermission); // Implement this function
-    if (result.success) {
-      setFeedback("Permissão atualizada com sucesso!");
-      await fetchData();
-      setSelectedPermission(null);
-    } else {
-      console.error(result.message);
-      setFeedback("Erro ao atualizar a permissão.");
-    }
-  };
+  //   const result = await updatePermission(selectedPermission); // Implement this function
+  //   if (result.success) {
+  //     setFeedback("Permissão atualizada com sucesso!");
+  //     await fetchData();
+  //     setSelectedPermission(null);
+  //   } else {
+  //     console.error(result.message);
+  //     setFeedback("Erro ao atualizar a permissão.");
+  //   }
+  // };
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -121,7 +121,7 @@ export default function TablePermissions() {
                         )}
                         <DialogFooter>
                           <Button type="button" variant="destructive" onClick={handleDelete}>Delete</Button>
-                          <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
+                          {/* <Button type="button" onClick={handleSaveChanges}>Save changes</Button> */}
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
