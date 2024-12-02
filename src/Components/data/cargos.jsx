@@ -13,3 +13,15 @@ export async function createRole(roleData) {
     throw error;
   }
 }
+
+
+export async function deleteRoles(id){
+  console.log(id)
+  try {
+      const response = await api.delete(`/Role/${id}`);
+      return response.data;
+  } catch (error) {
+      console.error("Erro ao deletar o cargo", error);
+      throw error.response?.data || { message: "Erro ao deletar o cargo" };
+  }
+}

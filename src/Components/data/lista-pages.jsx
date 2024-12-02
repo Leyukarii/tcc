@@ -16,7 +16,7 @@ export async function deletePage(id){
       const response = await api.delete(`/Page/${id}`);
       return response.data;
   } catch (error) {
-      console.error("Erro ao deletar a sala de estoque", error);
-      throw error.response?.data || { message: "Erro desconhecido ao deletar a sala de estoque" };
+      console.error("Erro ao deletar page", error);
+      throw error.response?.data || { message: "Erro desconhecido ao deletar page" };
   }
 }

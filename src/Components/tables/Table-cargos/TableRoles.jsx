@@ -8,17 +8,7 @@ import { useState, useEffect } from "react";
 import { Edit } from "lucide-react";
 import { getRoles } from "@/Components/data/lista-roles";
 import api from "@/axios/config"; // Certifique-se que essa é a instância correta
-
-// Função deleteRole para deletar o cargo
-const deleteRole = async (roleId) => {
-    try {
-        const response = await api.delete(`/Role/${roleId}`);
-        return { success: response.status === 200 };
-    } catch (error) {
-        console.error("Erro ao deletar cargo:", error);
-        return { success: false, message: error.message };
-    }
-};
+import { deleteRoles } from "@/Components/data/cargos";
 
 export default function TableRoles() {
     const [roles, setRoles] = useState([]);
@@ -56,23 +46,18 @@ export default function TableRoles() {
         setSelectedRole(role);
     };
 
+
     const handleDelete = async () => {
         if (selectedRole) {
-            try {
-                const response = await api.delete(`/Role/${selectedRole.id}`);
-                if (response.status === 200) {
-                    setRoles((prevRoles) => prevRoles.filter((role) => role.id !== selectedRole.id));
-                    setSelectedRole(null);
-                    setFeedback("Cargo deletado com sucesso!");
-                } else {
-                    setFeedback("Erro ao deletar o cargo.");
-                }
-            } catch (error) {
-                console.error("Erro ao deletar o Cargo:", error);
-                setFeedback("Erro ao deletar o cargo.");
-            }
+          const result = await deleteRoles(selectedRole.id); // Implement this function
+          if (result.success) {
+            setSelectedRole(null);
+            fetchData();
+          } else {
+            console.error(result.message);
+          }
         }
-    };
+      };
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
