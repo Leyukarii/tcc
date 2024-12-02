@@ -23,11 +23,13 @@ export async function updateCadastro(data) {
     const datas = {
       name: data.name,
       cpf: data.cpf,
-      birthDay: data.dataNascimento,
-      phoneNumber: data.telefone,
-      mail: data.email,
-      observations: data.obs,
+      birthDay: data.birthDay,
+      phoneNumber: data.phoneNumber,
+      mail: data.mail,
+      observations: data.observations,
     };
+    console.log(datas)
+
     try {
       const response = await api.put('/Patient', datas);
       return { success: true, data: response.data };
