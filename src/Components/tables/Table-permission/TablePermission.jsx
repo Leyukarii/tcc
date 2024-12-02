@@ -6,7 +6,7 @@ import { Button } from "@/Components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
 import { useState, useEffect } from "react";
 import { Edit } from "lucide-react";
-import { getPermissions } from "@/Components/data/permission";
+import { deletePermission, getPermissions } from "@/Components/data/permission";
 
 export default function TablePermissions() {
   const [permissions, setPermissions] = useState([]);

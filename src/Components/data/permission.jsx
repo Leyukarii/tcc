@@ -21,3 +21,15 @@ export async function getPermissions() {
     }
 }
 
+
+export async function deletePermission(id){
+    console.log(id)
+    try {
+        const response = await api.delete(`/Permission/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao deletar a sala de estoque", error);
+        throw error.response?.data || { message: "Erro desconhecido ao deletar a sala de estoque" };
+    }
+}
+
